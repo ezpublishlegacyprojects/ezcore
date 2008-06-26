@@ -1,0 +1,8 @@
+1.0
+* multiple class support in getElementsByCSS 
+* event object
+* ondomready/DOMContentLoaded  event
+* animation element lock
+* animation bug: ref when duration is different on show and hide
+* callable server functions(from client side)
+* blackbox

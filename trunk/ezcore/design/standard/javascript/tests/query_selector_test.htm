@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title> Selectors API Test  </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<script type="text/javascript" language="JavaScript" src="../ez_core.js"></script>
+	<script type="text/javascript" language="JavaScript">
+	<!--
+
+    var doc = document;
+	function debug( id, code, shouldBe, is, warning )
+	{
+	    var el = doc.getElementById(id), err = ez.set(warning) ? warning : "error", nr = id.split('_')[2];
+	    var str = nr + ":<span class='code'>" + code + "<\/span>" + " returned: ";
+		shouldBe = ez.$c(shouldBe);
+	    if ( shouldBe.indexOf( is ) !== -1 ) str += "<span class='ok'>" + is + "<\/span>";
+	    else str += "<span class='" + (err || 'notice') + "'>" + is + "<\/span>" + (err ? ", should have been: " + shouldBe.join(' or ') : '');
+	    if ( ez.string.trim( el.innerHTML ) )
+	    {
+	        str += '<a href="#" class="html">html<span>' + ez.string.htmlEntities( el.innerHTML.replace(/\n\s+/g, /\n/) ) + '<\/span><\/a>';
+	    }
+	    el.innerHTML = str;
+	}
+	
+	function test( test, text  )
+	{
+		if ( test === undefined ) doc.write( text + '<br />' );
+	}
+	//-->
+	</script>
+	<style type="text/css" media="all">
+	<!--
+	html, body
+	{
+	    padding: 0px;
+	    margin: 0px;
+	    width: 100%;
+	    background-color: #fcfcfc;
+	    font: 0.9em Arial, Helvetica, sans-serif;
+	    text-align: center;
+	    color:#444;
+	}
+	img { border: 0px;}
+	
+	#page { width: 980px; padding: 10px; padding-top: 40px; margin: auto; text-align: left; position: relative;}
+
+	#browser_test { position: absolute; top: 40px; right:10px; width: 240px; height: 60px; border: 1px solid #e1e1e1; color: red; }
+
+	.error { color: red; border: 1px solid red; padding: 5px; }
+	.warning { color: #FECD0A; border: 1px solid #FECD0A; padding: 5px; }
+	.notice { color: #666; border: 1px solid #bbb; padding: 5px; }
+	.ok {color: green; border: 1px solid green; padding: 5px; }
+	.code { padding: 5px; background: #f0f0f0; border: 1px dashed #e0e0e0; font-size: 90%; color: #444 }
+	.info { font-size: 80%; }
+	a.html { font-size:85%; color: #888; position: relative; float: right; margin-right: 5px;  }
+	a.html span { display: none; }
+	a.html:hover span { display: block; position: absolute;  top: -26px; right: 26px; padding: 1em; color: #111; font-size: 120%; background-color: #fff; border: 1px solid #e1e1e1; white-space: pre;}
+	
+	.test_case
+	{
+	    border: 1px solid #e1e1e1;
+	    background: #fff;
+	    padding-left: 3em;
+	    margin-bottom: 2px;
+	}
+	
+	/* css child selectors test *
+	#test_case_18 *
+	{
+	 padding: 5px;
+	 border: 1px solid red;
+	 margin: 10px;
+	 display: block;
+	}
+	#test_case_18 *:nth-child(odd) { border-color: green; } /* */
+	
+	-->
+	</style>
+</head>
+<body>
+
+<div id="page">
+<h1>Selectors API</h1>
+<h3>CSS 1, CSS 2 and some CSS 3 tests:</h3>
+
+<div id="browser_test">
+		<script type="text/javascript" language="JavaScript">
+		test( doc.querySelectorAll, "Your browser does not support document.querySelectorAll()" );
+		</script>
+</div>
+	
+	<div class="test_case">
+		<p id="test_case_3"></p><em></em><em></em>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_3 = doc.querySelectorAll('em');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_3', "doc.querySelectorAll('em').length", 2, test_case_3.length );
+		</script>
+	</div>
+
+	<div class="test_case">
+		<p id="test_case_4"><span></span><span></span><span></span></p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_4 = doc.getElementById('test_case_4').querySelectorAll('span');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_4', "doc.getElementById('test_case_4').querySelectorAll('span').length", 3, test_case_4.length );
+		</script>
+	</div>
+	
+	<div class="test_case">
+		<p id="test_case_5">
+			<span class="case_5_test"></span>
+			<span class="case_5_test"></span>
+			<span class="case_5_test"></span>
+			<span class="case_5_test"></span>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_5 = doc.querySelectorAll('.case_5_test');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_5', "doc.querySelectorAll('.case_5_test').length", 4, test_case_5.length );
+		</script>
+	</div>
+	
+	
+	<div class="test_case">
+		<p id="test_case_6">
+			<span class="case_6_test"></span>
+			<span class="case_6_test"></span>
+			<span class="case_6_test"></span>
+			<span class="case_6_test"></span>
+			<span class="case_6_test_not"></span>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_6 = doc.querySelectorAll('span.case_6_test');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_6', "doc.querySelectorAll('span.case_6_test').length", 4, test_case_6.length );
+		</script>
+	</div>
+
+
+	<div class="test_case">
+		<p id="test_case_8">
+			<a title="Foo where starving"></a>
+			<a title="Foo where starving"></a>
+			<a title="Foo where starving a lot"></a>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_8 = doc.querySelectorAll('a[title$=starving]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_8', "doc.querySelectorAll('a[title$=starving]').length", 2, test_case_8.length );
+		</script>
+	</div>
+	
+	
+	<div class="test_case">
+		<p id="test_case_9">
+			<a title="Foo went into the woods"></a>
+			<a title="Foo went into the woods"></a>
+			<a title="Foo wented into the wood"></a>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_9 = doc.querySelectorAll('a[title~=went]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_9', "doc.querySelectorAll('a[title~=went]').length", 2, test_case_9.length );
+		</script>
+	</div>
+	
+	<div class="test_case">
+		<p id="test_case_10">
+             <img /><img alt="yes" /><img alt="yes" /><img title="ok" /><img alt="yes" />
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_10 = doc.querySelectorAll('img[alt], img[title]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_10', "doc.querySelectorAll('img[alt], img[title]').length", 4, test_case_10.length );
+		</script>
+	</div>
+		
+	<div class="test_case">
+		<p id="test_case_11">
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_11 = doc.querySelectorAll('p#test_case_11');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_11', "doc.querySelectorAll('p#test_case_11').length", 1, test_case_11.length );
+		</script>
+	</div>
+
+	<div class="test_case">
+		<p id="test_case_13">
+		<a class="test"></a>
+		<a class="test moskit"></a>
+		<a class="test"></a>
+		<a class=""></a>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_13 = doc.querySelectorAll('#test_case_13 a[class=test]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_13', "doc.querySelectorAll('#test_case_13 a[class=test]').length", 2, test_case_13.length );
+		</script>
+	</div>
+
+    <div class="test_case">
+        <p id="test_case_14">
+	        <span>1</span>
+	        <span>2</span>
+	        <span>3</span>
+	        <span>4</span>
+        </p>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_14 = doc.querySelectorAll('#test_case_14 span:nth-child(even)');
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        debug( 'test_case_14', "doc.querySelectorAll('#test_case_14 span:nth-child(even)').length", 2,  test_case_14.length) );
+        </script>
+    </div>
+
+    <div class="test_case">
+        <p id="test_case_15">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+        </p>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_15 = doc.querySelectorAll('#test_case_15 span:first-child');
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        debug( 'test_case_15', "doc.querySelectorAll('#test_case_15 span:first-child')[0].length", 1, test_case_15.length );
+        </script>
+    </div>
+
+    <div class="test_case">
+        <p id="test_case_16">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+        </p>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_16 = doc.querySelectorAll('#test_case_16 span:last-child');
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        debug( 'test_case_16', "doc.querySelectorAll('#test_case_16 span:last-child')[0].length", 1, test_case_16.length );
+        </script>
+    </div>
+
+    <div class="test_case">
+        <p id="test_case_17">
+            <span><span></span></span>
+            <a><span></span></a>
+            <span><a></a></span>
+        </p>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_17 = doc.querySelectorAll('#test_case_17 > *');
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        debug( 'test_case_17', "doc.querySelectorAll('#test_case_17 > *').length", 3, test_case_17.length );
+        </script>
+    </div>
+    
+    <div class="test_case">
+        <p id="test_case_18">
+            <a href="sd">1<span>1a</span></a>
+            <a href="df">2<span>2a</span></a>
+            <span>3</span>
+        </p>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_18 = doc.querySelectorAll('#test_case_18 *:nth-child(odd)');
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        document.write( ez.$c( test_case_18 ).map(function(i){ return i.nodeName }).join(',') );
+        debug( 'test_case_18', "doc.querySelectorAll('#test_case_18 *:nth-child(odd)').length", 4, test_case_18.length );
+        </script>
+    </div>
+
+
+
+<h3>Edge cases:</h3>
+<p>Known browser issues</p>
+
+	<div class="test_case">
+		<p id="test_case_40">
+			<a title="Foo where starving"></a>
+			<a title="Foo where starving"></a>
+			<a title="Foo where starving "></a>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_40 = doc.querySelectorAll('#test_case_40 a[title$=starving]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_40', "doc.querySelectorAll('#test_case_40 a[title$=starving]').length", 2, test_case_40.length, 'warning' );
+		</script>
+		<p class="info">This fails in Opera, seems like Opera might trim element attributes. eg. both title="... starving" and title="... starving " match</p>
+	</div>
+	
+	<div class="test_case">
+		<p id="test_case_41">
+			<a href="http://ez.no"></a>
+			<a href="http://ez.no"></a>
+			<a href="http://ez.no/"></a>
+		</p>
+		<script type="text/javascript" language="JavaScript">
+		var test_case_41 = doc.querySelectorAll('#test_case_41 a[href$=no]');
+		</script>
+		<script type="text/javascript" language="JavaScript">
+		debug( 'test_case_41', "doc.querySelectorAll('#test_case_41 a[href$=no]').length", 2, test_case_41.length, 'warning' );
+		</script>
+		<p class="info">This fails in IE &lt; 8, it is appending missing end slashes (/) in urls, eg from href="http://ez.no" to href="http://ez.no/"</p>
+	</div>
+
+
+</div>
+</body>
+</html>

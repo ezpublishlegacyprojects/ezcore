@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>         
+                        
+<title> eZ Core :: Accordion Demo </title>
+    <script type="text/javascript" language="JavaScript" src="../ez_core.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../accordion.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../animation.js"></script>
+    <style>
+    <!--
+    
+    body
+    {
+        margin: 0;
+        padding: 0;
+        margin-top: 1em;
+        text-align: center;
+    }
+    
+    #container
+    {
+        margin: auto;
+        padding: 0;
+        width: 790px;
+    }
+
+    
+    div.slide
+    {
+        margin: 0;
+        padding: 0;
+        border: 1px solid #bbb;
+        overflow: auto;
+        height: 180px;
+        text-aling: left;
+    }
+    
+    #navigations { clear: both; height: 30px; }
+    a.navigation
+    {
+        float: left;
+        margin-left: 1em;
+    }
+    
+    a.navigation.accordion_selected { color: #aaa; }
+    
+    // -->
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="navigations">
+        <a class="navigation">1</a>
+        <a class="navigation">2</a>
+        <a class="navigation">3</a>
+        <a class="navigation">4</a>
+    </div>
+    <div id="slides">
+         <div class="slide">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed turpis ipsum, tincidunt id, faucibus ultrices, pellentesque ac, mi. Suspendisse auctor felis at nisi. Cras sit amet ante. Sed mattis, ante ut ultricies consectetuer, ipsum massa tincidunt sem, eget dictum risus justo in quam. Vestibulum ante libero, ornare non, tempor a, semper quis, lorem. Nulla tempor libero vitae urna. Phasellus neque. Nam malesuada magna nec risus. Aenean ultrices, risus in rhoncus molestie, justo lacus blandit magna, a commodo ante magna id orci. Nullam at sapien. Ut tincidunt, lorem in eleifend pharetra, felis mi pretium mi, in rhoncus nisl nisi et massa. Proin consectetuer, nulla in blandit malesuada, lectus enim tincidunt pede, id mattis leo augue ultrices metus. In sit amet turpis nec lectus interdum scelerisque. Ut molestie massa vitae dui. Sed ut enim quis nisl varius fermentum. Donec ut turpis ac pede interdum euismod. Proin sed quam.
+         </div>
+
+         <div class="slide">
+            Mauris semper risus vel elit. Aenean sed eros quis lorem aliquet volutpat. Maecenas pellentesque venenatis lorem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque libero nulla, lacinia sit amet, faucibus quis, placerat ac, turpis. Cras augue augue, mollis eget, venenatis vel, faucibus quis, ante. Donec in nunc. Ut mi orci, volutpat ultrices, condimentum sed, venenatis ut, pede. Donec mi neque, lacinia vitae, ultricies quis, hendrerit in, est. Morbi iaculis. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. In eleifend ligula sit amet neque. Vivamus quis tortor.
+         </div>
+
+         <div class="slide">
+            Proin sem. Quisque vulputate convallis risus. Mauris eget nisl ac quam congue imperdiet. Nunc auctor, augue non placerat tincidunt, neque dolor convallis lorem, a vehicula pede elit ac lacus. Suspendisse potenti. Praesent nunc. Nullam sollicitudin mauris vel lorem pellentesque lobortis. Etiam convallis nulla sit amet nisi. Donec quis felis nec neque molestie pharetra. Fusce ut neque in eros vulputate bibendum. Morbi tincidunt, odio sit amet euismod imperdiet, elit purus cursus odio, sit amet mattis ligula ligula vitae libero. Cras eget velit in diam pellentesque eleifend.
+         </div>
+
+         <div class="slide">
+            Integer quis pede et lacus facilisis luctus. Duis sollicitudin nisi eget libero egestas consequat. Morbi turpis turpis, adipiscing ac, tempor nec, fermentum consectetuer, sem. Curabitur eros arcu, dictum ut, pulvinar vel, mattis vitae, pede. Quisque leo. Nulla velit tortor, semper quis, tincidunt at, malesuada nec, purus. Donec dignissim egestas turpis. Nulla rutrum leo ullamcorper leo. Duis mattis gravida leo. Donec et justo non est euismod vehicula. Nullam pellentesque. Morbi aliquet tempor diam. Donec commodo facilisis arcu.
+         </div>
+    </div>
+    <a id="slide_prev">Prev</a> 
+    <a id="slide_next">Next</a>
+</div>
+
+
+
+<div id="debugoutput">
+</div>
+
+<script type="text/javascript" language="JavaScript">
+
+var slides = ez.$$('#slides div.slide'), navigation = ez.$$('#navigations a.navigation'); 
+
+slides.accordion( navigation, {duration: 400}, {height: 0, display: 'none'} );
+
+// accordionNext
+
+ez.$('slide_next').addEvent('click', slides.accordionNext, slides );
+ez.$('slide_prev').addEvent('click', slides.accordionPrev, slides );
+
+
+</script>
+</body>
+</html>

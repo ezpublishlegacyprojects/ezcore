@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title> eZ Core :: Animation Demo  </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<script type="text/javascript" language="JavaScript" src="../ez_core.js"></script>
+	<script type="text/javascript" language="JavaScript" src="../animation.js"></script>
+	<style type="text/css" media="all">
+	<!--
+	html, body
+	{
+	    padding: 0px;
+	    margin: 0px;
+	    width: 100%;
+	    background-color: #fcfcfc;
+	    font: 0.9em Arial, Helvetica, sans-serif;
+	    text-align: center;
+	    color:#444;
+	}
+	img { border: 0px;}
+	
+	#page { width: 820px; padding: 40px; margin: auto; text-align: left;}
+	
+	.error { color: red; border: 1px solid red; padding: 5px; }
+	.warning { color: #FECD0A; border: 1px solid #FECD0A; padding: 5px; }
+	.ok {color: green; border: 1px solid green; padding: 5px; }
+	.code { padding: 5px; background: #f0f0f0; border: 1px dashed #d0d0d0; font-size: 90%; line-height: 26px; }
+	.style { padding: 5px; background: #f0f0f0; border: 1px dashed #8C8CFF; font-size: 90%; line-height: 26px; }
+	.info { font-size: 80%; }
+	
+	.test_case
+	{
+	    border: 1px solid #d0d0d0;
+	    background: #fff;
+	    padding-left: 3em;
+	    margin-bottom: 2px;
+	}
+	
+	.test_case_outer { 	    border: 1px solid #e0e0e0; }
+	
+    .debug_notice { clear: both; }
+	.debug_error { clear: both; }
+    .debug_warning { clear: both; }
+	
+	h6 { margin: 1px 10px 0 0; }
+	.debug_notice h6 { color: #888; float: left; }
+	.debug_error h6 { color: red; float: left; }
+    .debug_warning h6 { color: #FF6600; float: left; }
+	-->
+	</style>
+	
+</head>
+<body>
+
+<div id="page">
+<h1>eZ Core animation test</h1>
+<h3>Simple animations:</h3>
+<p style="margin-top: -9px; font-style: italic;">Click on the boxes to start/stop animation!</p>
+
+	<div class="test_case" id="test_1" style="width: 755px">
+		<p>
+		<b>Opacity animation</b><br />
+		<span class="code">ez.$('test_1').toggle( {duration:1000, transition: ez.fx.sinoidal}, 'opacity', toggle);</span>
+		<br />		
+		<span class="style">width: 755px</span>
+		<br />
+		</p>
+	</div>
+
+
+	<div class="test_case" id="test_2">
+		<p>
+		<b>Width animation</b><br />
+		<span class="code">ez.$('test_2').toggle( {duration:1000, transition: ez.fx.sinoidal}, {width:400}, toggle);</span>
+		<br />		
+		</p>
+	</div>
+
+
+	<div class="test_case" id="test_3">
+		<p>
+		<b>Margin animation</b><br />
+		<span class="code">ez.$('test_3').toggle( {duration:1000, transition: ez.fx.sinoidal}, {marginLeft:250}, toggle);</span>
+		<br />		
+		</p>
+	</div>
+
+
+	<div class="test_case" id="test_4">
+		<p>
+		<b>Height animation</b><br />
+		<span class="code">ez.$('test_4').toggle( {duration:1000, transition: ez.fx.sinoidal}, {height:300}, toggle);</span>
+		<br />		
+		</p>
+	</div>
+	
+	<div class="test_case" id="test_5">
+		<p>
+		<b>Display toggling</b><br />
+		<span class="code">ez.$('test_5').hide( {duration:50}, {display:'none'} );</span>
+		<br />		
+		</p>
+	</div>
+	
+	
+	<div class="test_case" id="test_6" style="position:relative; top: 0px; left: 0px;">
+		<p>
+		<b>Position animation with relative position</b><br />
+		<span class="code">ez.$('test_6').toggle( {duration:800, transition: ez.fx.sinoidal}, {top: -300, left:-500}, toggle);</span>
+				<br />
+		<span class="style">position:relative; top: 0px; left: 0px;</span>
+		<br />		
+		</p>
+	</div>
+
+	<div class="test_case" id="test_7" style="position: absolute; top: 750px; left: 20px; width: 200px; height: 200px;">
+		<p>
+		<b>Position animation with absolute position</b><br />
+		<span class="code">ez.$('test_7').toggle( {duration:800, transition: ez.fx.sinoidal}, {top: 0, left:0}, toggle);</span>
+		<br />
+		<span class="style">position: absolute; top: 750px; left: 20px; width: 200px; height: 200px;</span>
+		<br />		
+		</p>
+	</div>
+	
+	
+	<div class="test_case" id="test_8" style="overflow: auto; height: 45px;">
+		<p>
+		<b>Scrolling animation</b><br />
+		<span class="code">ez.$('test_8').toggle( {duration:1000, transition: ez.fx.sinoidal}, {scrollTop: 35}, toggle);</span>
+		<br />
+		<span class="style">overflow: auto; height: 45px;</span>
+		<br />		
+		</p>
+	</div>
+	
+	<div class="test_case" id="test_9" style="height: 80px;">
+	<div class="test_case_inner" id="test_9_inner" style="visibility: hidden; width: 700px">
+		<p>
+		<b>Visibility animation</b><br />
+		<span class="code">ez.$('test_9').toggle( 1000, {opacity: 0.3, visibility: 'hidden'}, toggle);</span>
+		<br />
+		<span class="style">visibility: hidden; width: 700px</span>
+		<br />		
+		</p>
+	</div>
+	</div>
+	
+	<div class="test_case" id="test_10" style="height: 80px;">
+	<div class="test_case_inner" id="test_10_inner" style="display: none; width: 700px">
+		<p>
+		<b>Visibility animation</b><br />
+		<span class="code">ez.$('test_9').toggle( 1000, {opacity: 0.3, display: 'none'}, toggle);</span>
+		<br />
+		<span class="style">display: none; width: 700px</span>
+		<br />		
+		</p>
+	</div>
+	</div>
+	
+	<div class="test_case" id="test_11" style="height: 80px;">
+	<div class="test_case_inner" id="test_11_inner" style="width: 700px">
+		<p>
+		<b>Visibility animation</b><br />
+		<span class="code">ez.$('test_9').toggle( 1000, {opacity: 0.3, display: 'none'}, toggle);</span>
+		<br />
+		<span class="style">width: 700px</span>
+		<br />		
+		</p>
+	</div>
+	</div>
+	
+	<!-- div id="console" class="test_case">
+	</div -->
+	
+
+<script type="text/javascript">
+<!--
+
+//ez.console = ez.$( 'console' );
+
+function toggle( t, h)
+{
+	t.toggle( {}, {}, toggle);
+}
+
+ez.$('test_1').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:1000, transition: ez.fx.sinoidal}, 'opacity', toggle);
+});
+
+ez.$('test_2').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:1000, transition: ez.fx.sinoidal}, {width:500}, toggle);
+});
+
+ez.$('test_3').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:1000, transition: ez.fx.sinoidal}, {marginLeft:250}, toggle);
+});
+
+ez.$('test_4').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:1000, transition: ez.fx.sinoidal}, {height:300}, toggle);
+});
+
+ez.$('test_5').addEvent( 'click', function(){
+             this.toggle( {duration:50}, {display:'none'} );
+});
+
+ez.$('test_6').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:800, transition: ez.fx.sinoidal}, {top: -300, left:-500}, toggle );
+});
+
+ez.$('test_7').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:800, transition: ez.fx.sinoidal}, {top: 0, left:0}, toggle );
+});
+
+ez.$('test_8').addEvent( 'click', function(){
+             if ( this.timeout ) this.animationStop();
+             else this.toggle( {duration:1300, transition: ez.fx.sinoidal}, {scrollTop: 35}, toggle );
+});
+
+var test9inner = ez.$('test_9_inner');
+ez.$('test_9').addEvent( 'click', function(){
+             if ( test9inner.timeout ) test9inner.animationStop();
+             else test9inner.toggle( 1000, {opacity: .3, visibility: 'hidden'}, toggle);
+});
+
+var test10inner = ez.$('test_10_inner');
+ez.$('test_10').addEvent( 'click', function(){
+             if ( test10inner.timeout ) test10inner.animationStop();
+             else test10inner.toggle( 1000, {opacity: .3, display: 'none'}, toggle);
+});
+
+var test11inner = ez.$('test_11_inner');
+ez.$('test_11').addEvent( 'click', function(){
+             if ( test11inner.timeout ) test11inner.animationStop();
+             else test11inner.toggle( 1000, {opacity: .3, display: 'none'}, toggle);
+});
+
+-->
+</script>
+
+
+</div>
+</body>
+</html>

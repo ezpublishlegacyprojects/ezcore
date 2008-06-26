@@ -1,0 +1,101 @@
+eZContentRating v0.9 by ar
+----------------------------
+	
+	
+A module + 2 template operator to allow rating content.
+
+The custom databse table needed can be found in sql/ezrating.sql
+
+Nore:
+Users are only allowed to vote once pr object, anonymous user are not allowed to vote.
+User must have read access to the content and access to the voting view to be allowed to vote!
+
+
+# ezrating ( template operator )
+
+Get rating by owner , object, user or node id. (or combine any of them)
+Note: can be called in php with eZContentRating::getRatingWhere
+
+Example code for getting rating with template operators
+    
+    {*
+        getting the rating of content object
+    *}
+    {ezrating(hash('contentobject_id', 2))}
+    
+    {*
+        getting the rating of the object of the node
+        same as above but operator will get the object id for you
+        Note: It is more efficient to get by contentobject_id if you have it by hand.
+        (Since using node_id will make the ezrating code fetch the object before the rating is fetched)
+    *}
+    {ezrating(hash('node_id', 2))}
+    
+    {*
+        getting the rating by user id
+        to get what, how and when a user has rated something
+        could be used to figure out what users like...
+    *}
+    {ezrating(hash('user_id', 1688))}
+    
+    
+    {*
+        getting the rating by owner user id
+        to get how content made by a user is rated,
+        by who and when.
+    *}
+    {ezrating(hash('owner_id', 14))}
+
+
+
+    {*
+        The above commands can be combined to get
+        for instance what a user rated a object to
+    *}
+    {ezrating(hash('contentobject_id', 2, 'user_id', 1688))}
+     
+
+ezrating returns a hash:
+    rating [float] (calculated rating)
+    rating_int [int] (same as above but integer)
+    count [int](how many ratings)
+    total [float] (sum of ratings)
+    total_int [int] (same as above but integer)
+    data [array of hash( contentobject_id, user_id, rating, time, owner_id, published and modified)]
+
+
+
+# fetch_by_rating ( template operator )
+
+A fetch operator that works more or less like content list or content tree fetch.
+With a difference being that it fetches by rating ( or some other uniq sort_by options )
+
+Note: can be called direclty in php with eZContentRating::fetchNodeByRating
+
+Overview of supported parameters:
+
+ sort_by (def: array(array('rate', false ),array('rate_count', false)) controlls sorting
+     possible sortings are rate_count, rate, object_count, view_count, published and modified 
+     possible direction are true (ASC) and false (DESC)
+     Note: 'object_count' makes only sense when combined with group_by_owner
+ class_identifier (def: empty) limit fetch to a specific class(es)
+ offset  (def: 0) set offset on returned list
+ limit (def: 10) limit number of objects returned
+ group_by_owner (def: false) will give you result grouped by owner instead
+                and the node of the owner (user object) is
+                fetched intead
+ main_parent_node_id (def: none) Limit result based on parent main node id
+ main_parent_node_path (def: none) Alternative to above param, uses path string
+                instead for recursive fetch, format like $node.path_string: '/1/2/144/'
+ owner_main_parent_node_id (def: none) Limit result based on parent main 
+                node id of owner ( main user group ) 
+ owner_main_parent_node_path (def: none) Alternative to above param, uses path string
+                instead for recursive fetch, format like $node.path_string: '/1/2/144/'
+ owner_id (def: none) filters by owner object id
+ as_object (def: true) make node objects or not (rating ) 
+ load_data_map (def: false) preload data_map 
+ 
+ 
+ Look in autoloads/ezcontentrating.php for more comments on what the code does
+
+	

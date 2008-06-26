@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>         
+      	    			
+<title> eZ Core :: Crop Demo </title>
+	<script type="text/javascript" language="JavaScript" src="../ez_core.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../crop.js"></script>
+    <style>
+    <!--
+    
+    body
+    {
+        margin: 0;
+        padding: 0;
+        margin-top: 1em;
+        margin-left: 1em;
+        height: 1500px;
+        text-align: center;
+    }
+    
+    #container
+    {
+        margin: auto;
+        padding: 0;
+    }
+    
+    #container img
+    {
+        margin: 0;
+    }
+    
+    /* 
+      crop divs needs to have a border / padding / margin of 0
+      so you'll get correct size and position.
+   */
+    
+    div#cropdiv_position, div#cropdiv, div#cropdiv_inner
+    {
+        margin: 0;
+        padding: 0;
+        border: 0 none;
+    }
+    
+    /* This div is only needed because we need a border for accessibility
+       height: 100% is to make the div take all the inner space in #cropdiv
+       and to make IE use 'hasLayout' mode on the element so filter is used!
+    */
+    
+    div#cropdiv_inner 
+    {
+        height: 100%;
+        opacity: 0.4;
+        background-color: #fff;
+        filter: alpha(opacity='40');
+        border: 1px dashed red;
+    }
+    // -->
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <img src="waterlilies.jpg" alt="" />
+</div>
+
+<div id="cropdiv_position">
+    <div id="cropdiv">
+	    <div id="cropdiv_inner">
+	        Crop area
+	    </div>
+    </div>
+</div>
+
+
+
+<div id="debugoutput">
+</div>
+
+<script type="text/javascript" language="JavaScript">
+
+// This is the actual code, onCropDone & onCropMove is the event callbacks
+var img = ez.$$('img')[0], out = ez.$('debugoutput');
+img.crop( 'cropdiv', 'cropdiv_position', { onCropDone: demoSaveCrop, onCropMove: demoMoveCrop, cropAspectRatio: 1.33  } );
+
+function demoSaveCrop( t )
+{
+   //out is the div we are outputting debug info to
+   out.el.innerHTML += 'height:' + t.cropDiv.getSize('height', true) + ' width:' + t.cropDiv.getSize('width', true) + ' top:' + ( t.cropDiv.getPosition('top') - t.getPosition('top') ) + ' left:' + ( t.cropDiv.getPosition('left') - t.getPosition('left') ) + '<br />';
+}
+
+function demoMoveCrop( e, o, arr )
+{
+   //out is the div we are outputting debug info to
+   out.el.innerHTML = 'height:' + o.height + ' width:' + o.width +  '<br />';
+}
+
+            
+
+</script>
+</body>
+</html>

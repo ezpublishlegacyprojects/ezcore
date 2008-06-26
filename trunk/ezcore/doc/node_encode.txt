@@ -1,0 +1,28 @@
+Encodes node(s) / object(s)
+
+Simplifies node(s) / object(s) data  and encodes it into json (default), xml or just returns the simplified array hash.
+Note: this can be used directly in php as well, look in classes/ezajaxcontent.php
+
+
+Parameters:
+
+ node ( node, array of nodes, object or array of objects)
+ params ( extra parameters, not documented yet, look in classes/ezajaxcontent.php simplify() for comments )
+ encoding_type (  'json', 'xml' or false() )
+ 
+
+
+Examples:
+
+    json data for $node:
+    {node_encode( $node )}
+    
+    xml data for $node:
+    {node_encode( $node,, 'xml' )}
+    
+    Simplify $node:
+    {node_encode( $node,, false() )}
+    
+    json data for several nodes:
+    {def $nodes = fetch('content', 'list', hash('parent_node_id', 2 ))}
+    {node_encode( $nodes )}

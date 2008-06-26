@@ -1,0 +1,69 @@
+Template operator ezcss and ezcssfiles
+
+Uses eZPacker a script and css merger and packer.
+Reduces requests and bandwitch use to your server, especially speeds up first load on your site.
+
+It is also possible to have dynamic code generators to return code.
+See classes/ezcorepackerfunctions.php for some simple examples.
+
+ezcssfiles returns array file paths and css content in cases where you use code generators.
+ezcss generates the xhtml markup for you so you don't need to do anything but calling it.
+
+Packed files are cached in your var folder and not regenerated untill one of the input files are modifed.
+So you'll need this rewrite rule to allow these files in apache (same as Online Editor 5.0):
+
+    RewriteRule ^/var/[^/]+/cache/(stylesheets|javascripts?)/.* - [L]
+
+
+There is no overhead with these functions if you have the ezcss / ezcssfiles inside cache-block.
+
+Definition of operators:
+
+
+  'ezcss' => array( 'css_array' => array( 'type' => 'array',
+                          'required' => true,
+                          'default' => array() ),
+                    'media' => array( 'type' => 'string',
+                          'required' => false,
+                          'default' => 'all' ),
+                    'type' => array( 'type' => 'string',
+                          'required' => false,
+                          'default' => 'text/css' ),
+                    'rel' => array( 'type' => 'string',
+                          'required' => false,
+                          'default' => 'stylesheet' ),
+                    'pack_level' => array( 'type' => 'integer',
+                          'required' => false,
+                          'default' => 3 ) ),
+  'ezcssfiles' => array( 'css_array' => array( 'type' => 'array',
+                          'required' => true,
+                          'default' => array() ),
+                    'pack_level' => array( 'type' => 'integer',
+                          'required' => false,
+                          'default' => 3 ) )
+ 
+Note: css_array supports array of arrays
+Packing has 4 levels:
+ 0 = off
+ 1 = merge files
+ 2 = 1 + remove whitespace
+ 3 = 2 + remove more whitespace  (jsmin is used for scripts)
+ Will be forced to 0 when site.ini[TemplateSettings]DevelopmentMode is enabled
+ for developer productivity (debugging css/scripts..)
+
+                     
+Use, if used with ezwebin:
+ 
+ {ezcss( array( 'core.css',
+               'debug.css',
+               'pagelayout.css',
+               'content.css',
+               'websitetoolbar.css',
+               ezini( 'StylesheetSettings', 'CSSFileList', 'design.ini' ),
+               ezini('StylesheetSettings','ClassesCSS','design.ini'),
+               ezini('StylesheetSettings','SiteCSS','design.ini')
+ ))}
+ 
+Generated html code:
+
+  <link rel="stylesheet" type="text/css" href="/trunk/var/ezwebin_site/cache/stylesheets/54d9eb3c312917bc2f5fd5b60985f80d_all.css" media="all" />

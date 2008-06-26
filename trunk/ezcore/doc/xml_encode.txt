@@ -1,0 +1,9 @@
+Encodes hashes / arrays to xml format
+
+Note: take a look at node_encode if you want to transform nodes / objects to xml data
+
+
+Example:
+
+
+{xml_encode( hash('name', 'Ole', 'last_name', 'Borg') )}
