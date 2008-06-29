@@ -74,7 +74,7 @@ class NodeHasChildrenFilter
         $sqlJoins = "$count $clause ( SELECT
                                    count(*)
                                  FROM
-                                   ezcontentobject_tree as ezcontentobject_tree_2
+                                   ezcontentobject_tree ezcontentobject_tree_2
                                  WHERE
                                    ezcontentobject_tree_2.parent_node_id = ezcontentobject_tree.node_id) AND";
         return array('tables' => '', 'joins' => $sqlJoins, 'columns' => '');
