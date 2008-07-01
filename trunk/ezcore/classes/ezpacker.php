@@ -29,7 +29,7 @@
 //
 
 /*
- Template operators for merging and packing css and javascript files.
+ Functions for merging and packing css and javascript files.
  Reduces page load time both in terms of reducing connections from clients
  and bandwidth ( if packing is turned on ).
  
@@ -38,28 +38,16 @@
  1 = merge files
  2 = 1 + remove whitespace
  3 = 2 + remove more whitespace  (jsmin is used for scripts)
- Will be forced to 0 when site.ini[TemplateSettings]DevelopmentMode is enabled.
- 
- Recomended settings are 3 for css and 2 for javascript,
- basicly since the optimizer isn't string safe.
- eg: var str = ' My last name, and my brothers last name are: Olsen'; 
-     var str = ' My last name,and my brothers last name are:Olsen';
  
  In case of css files, relative image paths will be replaced
  by absolute paths.
 
  You can also use css / js generators to generate content dynamically.
- This is better explained in ezoe.ini[Packer_<function>]
- 
- Functions packFiles, buildJavascriptTag and buildStylesheetTag can be used
- statically from php as well.
+ This is better explained in ezcore.ini[Packer_<function>]
 
- ezscriptfiles and ezcssfiles template operators does not return html, just 
+ buildStylesheetFiles and buildJavascriptFiles functions does not return html, just 
  an array of file urls / content (from generators).
  
- Example of use in pagelayout:
-    {ezoecss( array('core.css', 'pagelayout.css', 'content.css', ezini( 'StylesheetSettings', 'CSSFileList', 'design.ini' ) ))}
-    {ezoescript( ezini( 'JavaScriptSettings', 'JavaScriptList', 'design.ini' ) )}
 */
 
 //include_once( 'lib/ezfile/classes/ezfile.php' );
@@ -67,6 +55,7 @@
 //include_once( 'kernel/common/ezoverride.php' );
 
 include_once( 'extension/ezcore/lib/jsmin.php' );
+include_once( 'extension/ezcore/classes/ezcoreservercall.php' );
 
 class eZPacker
 {
@@ -76,106 +65,9 @@ class eZPacker
     
     static protected $wwwDir = null;
     static protected $cacheDir = null;
-
-    function operatorList()
-    {
-        return array( 'ezscript', 'ezscriptfiles', 'ezcss', 'ezcssfiles'  );
-    }
-
-    function namedParameterPerOperator()
-    {
-        return true;
-    }
-
-    function namedParameterList()
-    {
-        return array( 'ezscript' => array( 'script_array' => array( 'type' => 'array',
-                                              'required' => true,
-                                              'default' => array() ),
-                                           'type' => array( 'type' => 'string',
-                                              'required' => false,
-                                              'default' => 'text/javascript' ),
-                                           'language' => array( 'type' => 'string',
-                                              'required' => false,
-                                              'default' => 'javascript' ),
-                                           'pack_level' => array( 'type' => 'integer',
-                                              'required' => false,
-                                              'default' => 2 )),
-                      'ezscriptfiles' => array( 'script_array' => array( 'type' => 'array',
-                                              'required' => true,
-                                              'default' => array() ),
-                                           'pack_level' => array( 'type' => 'integer',
-                                              'required' => false,
-                                              'default' => 2 )),
-                      'ezcss' => array( 'css_array' => array( 'type' => 'array',
-                                              'required' => true,
-                                              'default' => array() ),
-                                        'media' => array( 'type' => 'string',
-                                              'required' => false,
-                                              'default' => 'all' ),
-                                        'type' => array( 'type' => 'string',
-                                              'required' => false,
-                                              'default' => 'text/css' ),
-                                        'rel' => array( 'type' => 'string',
-                                              'required' => false,
-                                              'default' => 'stylesheet' ),
-                                        'pack_level' => array( 'type' => 'integer',
-                                              'required' => false,
-                                              'default' => 3 ) ),
-                      'ezcssfiles' => array( 'css_array' => array( 'type' => 'array',
-                                              'required' => true,
-                                              'default' => array() ),
-                                        'pack_level' => array( 'type' => 'integer',
-                                              'required' => false,
-                                              'default' => 3 ) ));
-    }
-
-    function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters )
-    {
-        $ret = '';
-        // Do not pack files if developmentMode is enabled
-        $ezIni = eZINI::instance();
-        if ( $ezIni->variable('TemplateSettings', 'DevelopmentMode') === 'enabled' )
-        {
-            $packLevel = 0;
-        }
-        else
-        {
-            $packLevel = (int) $namedParameters['pack_level'];
-        }
-        
-        
-        switch ( $operatorName )
-        {
-            case 'ezscript':
-                {                    
-                    $ret = eZPacker::buildJavascriptTag( $namedParameters['script_array'],
-                                                         $namedParameters['type'],
-                                                         $namedParameters['language'],
-                                                         $packLevel );                    
-                } break;
-            case 'ezcss':
-                {                    
-                    $ret = eZPacker::buildStylesheetTag( $namedParameters['css_array'],
-                                                         $namedParameters['media'],
-                                                         $namedParameters['type'],
-                                                         $namedParameters['rel'],
-                                                         $packLevel );                    
-                } break;
-            case 'ezscriptfiles':
-                {                    
-                    $ret = eZPacker::buildJavascriptFiles( $namedParameters['script_array'], $packLevel );                    
-                } break;
-            case 'ezcssfiles':
-                {                    
-                    $ret = eZPacker::buildStylesheetFiles( $namedParameters['css_array'], $packLevel );                    
-                } break;
-        }
-        $operatorValue = $ret;
-    }
     
     // static :: Builds the xhtml tag(s) for scripts
-    static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel )
+    static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel = 2 )
     {
         $ret = '';
         $packedFiles = eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel );
@@ -191,7 +83,7 @@ class eZPacker
     }
     
     // static :: Builds the xhtml tag(s) for stylesheets
-    static function buildStylesheetTag( $cssFiles, $media, $type, $rel, $packLevel )
+    static function buildStylesheetTag( $cssFiles, $media, $type, $rel, $packLevel = 3 )
     {
         $ret = '';
         $packedFiles = eZPacker::packFiles( $cssFiles, 'stylesheets/', '_' . $media . '.css', $packLevel );
@@ -208,13 +100,13 @@ class eZPacker
     
     
     // static :: Builds a array of script files
-    static function buildJavascriptFiles( $scriptFiles, $packLevel )
+    static function buildJavascriptFiles( $scriptFiles, $packLevel = 2 )
     {
         return eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel );
     }
     
     // static :: Builds a array of stylesheet files
-    static function buildStylesheetFiles( $cssFiles, $packLevel )
+    static function buildStylesheetFiles( $cssFiles, $packLevel = 3 )
     {
         return eZPacker::packFiles( $cssFiles, 'stylesheets/', '_all.css', $packLevel );
     }
@@ -279,41 +171,28 @@ class eZPacker
             // if the file name contains :: it is threated as a custom code genarator
             else if ( strpos( $file, '::' ) !== false )
             {
-                $args = explode( '::', $file );
-                if ( $ezCoreIni->hasGroup( 'Packer_' . $args[0] ) )
+                $serverCall = eZCoreServerCall::getInstance( explode( '::', $file ) );
+                if ( !$serverCall instanceOf eZCoreServerCall )
                 {
-                   // load file if defined, else use autoload 
-                   if ( $ezCoreIni->hasVariable( 'Packer_' . $args[0], 'File' ) )
-                        include_once( $ezCoreIni->variable( 'Packer_' . $args[0], 'File' ) );
-                   // get class name if defined, else use first argument as class name 
-                   if ( $ezCoreIni->hasVariable( 'Packer_' . $args[0], 'Class' ) )
-                        $args[0] = $ezCoreIni->variable( 'Packer_' . $args[0], 'Class' );
-                }
-                else
-                {
-                    // contiue if not defined to avoid all possible classes to be callable
+                    // continue if not valid
                     continue;
                 }
-                // check modified time if it has getCacheTime method
-                if ( method_exists( $args[0], 'getCacheTime' ) )
-                {
-                    $lastmodified  = max( $lastmodified, call_user_func( array( $args[0], 'getCacheTime' ), $args[1] ));
-                }
+                
+                $lastmodified = $serverCall->getCacheTime( $lastmodified, $packerInfo );
+
                 // make sure the function is present on the class
-                else if ( !method_exists( $args[0], $args[1] ) )
+                if ( !$serverCall->hasCall() )
                 {
-                    eZDebug::writeWarning( "Could not find function: $args[0]::$args[1]()", "eZPacker::packFiles()" );
+                    eZDebug::writeWarning( 'Could not find function: ' . $serverCall->getCallName() . '()', "eZPacker::packFiles()" );
                     continue;
                 }
 
-                $validFiles[] = $args;
+                $validFiles[] = $serverCall;
                 $cacheName   .= $file . '_';
                 // generate content straight away if packing is disabled
                 if ( $packLevel === 0 )
                 {
-                   $functionClass = array_shift( $args );
-                   $functionName = array_shift( $args );
-                   $validWWWFiles[] = call_user_func( array( $functionClass, $functionName ), $args, $packerInfo );
+                   $validWWWFiles[] = $serverCall->call( $packerInfo );
                 }
                 continue;
             }
@@ -389,11 +268,9 @@ class eZPacker
         {
 
            // if this is a js / css generator, call to get content
-           if ( is_array( $file ) )
+           if ( $file instanceOf eZCoreServerCall )
            {
-               $functionClass = array_shift( $file );
-               $functionName = array_shift( $file );
-               $content .= call_user_func( array( $functionClass, $functionName ), $file, $packerInfo );
+               $content .= $file->call( $packerInfo );
                continue;
            }
 

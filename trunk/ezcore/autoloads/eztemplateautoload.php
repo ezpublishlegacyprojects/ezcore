@@ -6,8 +6,8 @@ $eZTemplateOperatorArray[] = array( 'script' => 'extension/ezcore/autoloads/ezra
                                     'operator_names' => array( 'ezrating',
                                                                'fetch_by_rating') );
 
-$eZTemplateOperatorArray[] = array( 'script' => 'extension/ezcore/autoloads/ezpacker.php',
-                                    'class' => 'eZPacker',
+$eZTemplateOperatorArray[] = array( 'script' => 'extension/ezcore/autoloads/ezpackertemplatefunctions.php',
+                                    'class' => 'eZPackerTemplateFunctions',
                                     'operator_names' => array( 'ezscript',
                                                                'ezscriptfiles',
                                                                'ezcss',

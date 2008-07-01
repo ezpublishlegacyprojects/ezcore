@@ -27,14 +27,12 @@
 //
 
 /*
- * Generates all i18n strings for the TinyMCE editor
- * and transforms them to the TinyMCE format for
- * translations.
+ * Examples on eZCoreServerCall Functions
  */
 
-class eZCorePackerFunctions
+class eZCoreServerCallExampleFunctions
 {
-    public static function test( $args )
+    public static function time( $args )
     {
         if ( $args && isset( $args[0] ) )
             return $args[0]. '_' . time();

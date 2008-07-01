@@ -31,10 +31,11 @@
  * Lets you call custom php code(s) from javascript to return json / xhtml / xml / text 
  */
 
-include_once( 'extension/ezcore/autoloads/ezpacker.php' );
+include_once( 'extension/ezcore/classes/ezcoreservercall.php' );
 
 $http           = eZHTTPTool::instance();
 $callType       = isset($Params['type']) ? $Params['type'] : 'call';
+$callFnList     = array();
 
 if ( isset($Params['interval']) && $Params['interval'] > 49 )
     $callInterval = $Params['interval'] * 1000; // intervall in milliseconds, minimum is 0.05 seconds 
@@ -58,11 +59,19 @@ if ( $http->hasPostVariable( 'stream_seperator' ) )
     $stramSeperator = $http->postVariable( 'stream_seperator' );
 else
     $stramSeperator = '@END@';
+    
+//prepere calls
+foreach( $callList as $call )
+{
+    $callFnList[] = eZCoreServerCall::getInstance( explode( '::', $call ), true, true );
+}
 
+$callFnListCount = count( $callFnList ) -1;
 
+// do calls
 if ( $callType === 'stream' )
 {
-    $endTime = time() + 6;
+    $endTime = time() + 29;
     while ( @ob_end_clean() );
     // flush 256 bytes first to force ie to not buffer the stream
     if ( strpos( eZSys::serverVariable( 'HTTP_USER_AGENT' ), 'MSIE' ) !== false )
@@ -76,14 +85,32 @@ if ( $callType === 'stream' )
     //set_time_limit(65);
     while( time() < $endTime )
     {
-        echo $stramSeperator . implode($callSeperator, eZPacker::buildJavascriptFiles($callList , 0) );
+        echo $stramSeperator . implode( $callSeperator, multipleeZCoreServerCalls( $callFnList ) );
         flush();
-        usleep($callInterval);
+        usleep( $callInterval );
     }
 }
 else
 {
-    echo implode($callSeperator, eZPacker::buildJavascriptFiles($callList , 0) );
+    echo implode( $callSeperator, multipleeZCoreServerCalls( $callFnList ) );
+}
+
+
+function multipleeZCoreServerCalls( $calls )
+{
+    $r = array();
+    foreach( $calls as $key => $call )
+    {
+        if( $call instanceOf eZCoreServerCall )
+        {
+            $r[] =  $call->call();
+        }
+        else
+        {
+            $r[] = '';//??
+        }
+    }
+    return $r;
 }
 
 eZDB::checkTransactionCounter();
