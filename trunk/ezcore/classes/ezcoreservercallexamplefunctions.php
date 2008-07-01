@@ -38,7 +38,66 @@ class eZCoreServerCallExampleFunctions
             return $args[0]. '_' . time();
         return time();
     }
-    
+
+    public static function keyword( $args )
+    {
+        $ezcoreINI = eZINI::instance( 'ezcore.ini' );
+        $http    = eZHTTPTool::instance();
+        
+        $keywordLimit            = 30;
+        $keywordSuggestionsArray = $ezcoreINI->variable( 'Keyword', 'SuggestionsArray' );
+        $classID                 = false;
+        $keywordStr              = '';
+
+        if( $http->hasPostVariable( 'Keyword' ) )
+            $keywordStr = $http->postVariable( 'Keyword' );
+        else if ( isset( $args[0] ) )
+            $keywordStr = $args[0];
+
+        if ( isset( $args[1] ) )
+            $keywordLimit = (int) $args[1];
+        else if( $ezcoreINI->hasVariable( 'Keyword', 'Limit' ) )
+            $keywordLimit = (int) $ezcoreINI->variable( 'Keyword', 'Limit' );
+
+        if ( isset( $args[2] ) )
+        {
+            $classID = (int) $args[2];
+        }
+
+        if ( !is_array( $keywordSuggestionsArray ) )
+        {
+            $keywordSuggestionsArray = array();
+        }
+
+        $keywords = array();
+        $searchList = array('result' => array() );
+
+        // first return keyword matches from ini
+        foreach ( $keywordSuggestionsArray as $string )
+        {
+            if( $keywordStr === '' or strpos( strtolower( $string ), strtolower( $keywordStr ) ) === 0)
+            {
+                $keywords[] = $string;
+                $keywordLimit--;
+                if ( $keywordLimit === 0 ) break;
+            }
+        }
+
+        if ( $keywordLimit > 0 )
+        {
+            $searchList = eZContentFunctionCollection::fetchKeyword( $keywordStr, $classID, 0, $keywordLimit );
+        }
+
+        //then return matches from database
+        foreach ( $searchList['result'] as $node )
+        {
+            if ( $node['keyword'] )
+                $keywords[] = $node['keyword'];
+        }
+
+        return $keywords;
+    }
+
     public static function serverCallInit()
     {
         $url = self::getIndexDir() . 'ezcore/call/';

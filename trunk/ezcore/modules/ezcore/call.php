@@ -32,9 +32,11 @@
  */
 
 include_once( 'extension/ezcore/classes/ezcoreservercall.php' );
+include_once( 'extension/ezcore/classes/ezajaxcontent.php' );
 
 $http           = eZHTTPTool::instance();
 $callType       = isset($Params['type']) ? $Params['type'] : 'call';
+$contentType    = isset($Params['content_type']) && $Params['content_type'] ? $Params['content_type'] : 'json';
 $callFnList     = array();
 
 if ( isset($Params['interval']) && $Params['interval'] > 49 )
@@ -53,12 +55,12 @@ else
 if ( $http->hasPostVariable( 'call_seperator' ) )
     $callSeperator = $http->postVariable( 'call_seperator' );
 else
-    $callSeperator = '@SEPERATOR@';
+    $callSeperator = '@SEPERATOR#';
 
 if ( $http->hasPostVariable( 'stream_seperator' ) )
     $stramSeperator = $http->postVariable( 'stream_seperator' );
 else
-    $stramSeperator = '@END@';
+    $stramSeperator = '@END#';
     
 //prepere calls
 foreach( $callList as $call )
@@ -67,6 +69,12 @@ foreach( $callList as $call )
 }
 
 $callFnListCount = count( $callFnList ) -1;
+
+// set headers
+if ( $contentType === 'xml' )
+    header("Content-Type: text/xml; charset=utf-8");
+else
+    header("Content-Type: text/javascript; charset=utf-8");
 
 // do calls
 if ( $callType === 'stream' )
@@ -85,30 +93,32 @@ if ( $callType === 'stream' )
     //set_time_limit(65);
     while( time() < $endTime )
     {
-        echo $stramSeperator . implode( $callSeperator, multipleeZCoreServerCalls( $callFnList ) );
+        echo $stramSeperator . implode( $callSeperator, multipleeZCoreServerCalls( $callFnList, $contentType ) );
         flush();
         usleep( $callInterval );
     }
 }
 else
 {
-    echo implode( $callSeperator, multipleeZCoreServerCalls( $callFnList ) );
+    echo implode( $callSeperator, multipleeZCoreServerCalls( $callFnList, $contentType ) );
 }
 
 
-function multipleeZCoreServerCalls( $calls )
+function multipleeZCoreServerCalls( $calls, $contentType = 'json' )
 {
     $r = array();
     foreach( $calls as $key => $call )
     {
+        $response = array( 'error_text' => '', 'content' => '' );
         if( $call instanceOf eZCoreServerCall )
         {
-            $r[] =  $call->call();
+            $response['content'] =  $call->call();
         }
         else
         {
-            $r[] = '';//??
+            $response['error_text'] = 'not a valid server call';
         }
+        $r[] = $contentType === 'xml' ? eZAjaxContent::xmlEncode( $response ) : eZAjaxContent::jsonEncode( $response );
     }
     return $r;
 }

@@ -90,7 +90,28 @@ class eZAjaxContent
     */
     public static function simplify( $obj, $params = array() )
     {
-        if ( !$obj ) return array();
+        if ( !$obj )
+        {
+            return array();
+        }
+        else if ( $obj instanceof eZContentObject)
+        {
+            $node          = $obj->attribute( 'main_node' );
+            $contentObject = $obj;
+        }
+        else if ( $obj instanceof eZContentObjectTreeNode ) 
+        {
+            $node          = $obj;
+            $contentObject = $obj->attribute( 'object' );
+        }
+        else if ( is_array( $obj ) )
+        {
+            return $obj; // Array is returned as is
+        }
+        else
+        {
+            return ''; // Other passed objects are not supported
+        }
 
         $ini = eZINI::instance( 'site.ini' );
         $params = array_merge( array(
@@ -113,21 +134,6 @@ class eZAjaxContent
             
         if (  !isset( $params['imageDataTypes'] ) )
             $params['imageDataTypes'] = $ini->variable( 'ImageDataTypeSettings', 'AvailableImageDataTypes' );
-
-        if ( $obj instanceof eZContentObject)
-        {
-            $node          = $obj->attribute( 'main_node' );
-            $contentObject = $obj;
-        }
-        elseif ( $obj instanceof eZContentObjectTreeNode ) 
-        {
-            $node          = $obj;
-            $contentObject = $obj->attribute( 'object' );
-        }
-        else
-        {
-            return ''; // Other passed objects are not supported
-        }
 
         $ret                     = array();
         $attrtibuteArray         = array();
@@ -237,21 +243,21 @@ class eZAjaxContent
         return $ret;
     }
 
-    public static function xmlEncode( $hash )
+    public static function xmlEncode( $hash, $childName = 'child' )
     {
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startDocument('1.0', 'UTF-8');
         $xml->startElement('root');
         
-        self::xmlWrite($xml, $hash);
+        self::xmlWrite( $xml, $hash, $childName );
         
         $xml->endElement();
         return $xml->outputMemory( true );
     
     }
     
-    protected static function xmlWrite( XMLWriter $xml, $hash )
+    protected static function xmlWrite( XMLWriter $xml, $hash, $childName = 'child' )
     {
         foreach( $hash as $key => $value )
         {
@@ -262,7 +268,14 @@ class eZAjaxContent
                 $xml->endElement();
                 continue;
             }
-            $xml->writeElement( $key, $value );
+            if ( is_numeric( $key ) )
+            {
+                $xml->writeElement( $childName, $value );
+            }
+            else
+            {
+                $xml->writeElement( $key, $value );
+            }
         }
     }
 
