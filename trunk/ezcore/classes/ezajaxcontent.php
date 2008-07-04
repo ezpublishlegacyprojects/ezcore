@@ -36,19 +36,29 @@ class eZAjaxContent
     protected static $instance         = null;
     protected static $nativeJsonEncode = null;
     
-    // protected __construct, so new instance can only be created with getInstance()
+    /**
+     * Constructor
+     *
+     * @access private
+     */
     protected function __construct()
     {
     }
 
-    // protected __clone, prevents cloning of object
+    /**
+     * Clone
+     *
+     * @access private
+     */
     protected function __clone()
     {
     }
 
-    /*
-     Static Singleton function to get a instance of this class
-    */
+    /**
+     * getInstance
+     *
+     * @return eZAjaxContent
+     */
     public static function getInstance()
     {
         if ( self::$instance === null )
@@ -58,9 +68,15 @@ class eZAjaxContent
         return self::$instance;
     }
     
-    /*
-     Function for encoding content object(s) or node(s) to simplified json objects or xml
-    */
+    /**
+     * Function for encoding content object(s) or node(s) to simplified
+     * json objects, xml or array hash
+     * 
+     * @param mixed $obj
+     * @param array $params
+     * @param string $type
+     * @return mixed
+     */
     public static function nodeEncode( $obj, $params = array(), $type = 'json' )
     {
         if ( is_array( $obj ) )
@@ -85,9 +101,13 @@ class eZAjaxContent
         
     }
     
-    /*
-      Function for simplifying a content object or node 
-    */
+    /**
+     * Function for simplifying a content object or node
+     *
+     * @param mixed $obj
+     * @param array $params
+     * @return array
+     */
     public static function simplify( $obj, $params = array() )
     {
         if ( !$obj )
@@ -100,6 +120,11 @@ class eZAjaxContent
             $contentObject = $obj;
         }
         else if ( $obj instanceof eZContentObjectTreeNode ) 
+        {
+            $node          = $obj;
+            $contentObject = $obj->attribute( 'object' );
+        }
+        else if ( $obj instanceof eZFindResultNode ) 
         {
             $node          = $obj;
             $contentObject = $obj->attribute( 'object' );
@@ -243,6 +268,13 @@ class eZAjaxContent
         return $ret;
     }
 
+    /**
+     * Encodes simple multilevel array and hash values to valid xml string
+     * 
+     * @param mixed $hash
+     * @param string $childName
+     * @return string
+    */
     public static function xmlEncode( $hash, $childName = 'child' )
     {
         $xml = new XmlWriter();
@@ -256,7 +288,15 @@ class eZAjaxContent
         return $xml->outputMemory( true );
     
     }
-    
+
+    /**
+     * Recursive xmlWriter function called by xmlEncode
+     * 
+     * @param XMLWriter $xml
+     * @param mixed $hash
+     * @param string $childName
+     * @access private
+    */
     protected static function xmlWrite( XMLWriter $xml, $hash, $childName = 'child' )
     {
         foreach( $hash as $key => $value )
@@ -279,9 +319,12 @@ class eZAjaxContent
         }
     }
 
-    /*
-     Wrapper function for encoding to json with native or php version
-     depending on what the system supports
+    /**
+     * Wrapper function for encoding to json with native or php version
+     * depending on what the system supports
+     * 
+     * @param mixed $obj
+     * @return string
     */
     public static function jsonEncode( $obj )
     {
@@ -296,13 +339,18 @@ class eZAjaxContent
     }
     
     
-    /*
-     * @author      Michal Migurski <mike-json@teczno.com>
-     * @author      Matt Knapp <mdknapp[at]gmail[dot]com>
-     * @author      Brett Stimmerman <brettstimmerman[at]gmail[dot]com>
-     * @copyright   2005 Michal Migurski
-     * @license     http://www.freebsd.org/copyright/freebsd-license.html
-     * @link        http://pear.php.net/pepr/pepr-proposal-show.php?id=198
+    /**
+     * Returns the JSON representation of a value using php code
+     * 
+     * @param mixed $var
+     * @author Michal Migurski <mike-json@teczno.com>
+     * @author Matt Knapp <mdknapp[at]gmail[dot]com>
+     * @author Brett Stimmerman <brettstimmerman[at]gmail[dot]com>
+     * @copyright 2005 Michal Migurski
+     * @license http://www.freebsd.org/copyright/freebsd-license.html
+     * @link http://pear.php.net/pepr/pepr-proposal-show.php?id=198
+     * @access private
+     * @return string
     */
     protected function phpJsonEncode( $var )
     {       
@@ -455,16 +503,15 @@ class eZAjaxContent
         }
     }
 
-   /** function name_value
+   /**
     * array-walking function for use in generating JSON-formatted name-value pairs
-    *
-    * @param    string  $name   name of key to use
-    * @param    mixed   $value  reference to an array element to be encoded
-    *
-    * @return   string  JSON-formatted name-value pair, like '"name":value'
-    * @access   private
+    * 
+    * @param string $name
+    * @param mixed $value
+    * @access private
+    * @return string
     */
-    protected function phpJsonEncodeNameValue($name, $value)
+    protected function phpJsonEncodeNameValue( $name, $value )
     {
         return (sprintf("%s:%s", $this->phpJsonEncode(strval($name)), $this->phpJsonEncode($value)));
     }
