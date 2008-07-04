@@ -1,12 +1,12 @@
-eZContentRating v0.9 by ar
-----------------------------
+eZContentRating
+---------------
 	
 	
 A module + 2 template operator to allow rating content.
 
-The custom databse table needed can be found in sql/ezrating.sql
+The custom database table needed can be found in sql/ezrating.sql
 
-Nore:
+Note:
 Users are only allowed to vote once pr object, anonymous user are not allowed to vote.
 User must have read access to the content and access to the voting view to be allowed to vote!
 
@@ -70,12 +70,12 @@ ezrating returns a hash:
 A fetch operator that works more or less like content list or content tree fetch.
 With a difference being that it fetches by rating ( or some other uniq sort_by options )
 
-Note: can be called direclty in php with eZContentRating::fetchNodeByRating
+Note: can be called directly in php with eZContentRating::fetchNodeByRating
 
 Overview of supported parameters:
 
  sort_by (def: array(array('rate', false ),array('rate_count', false)) controlls sorting
-     possible sortings are rate_count, rate, object_count, view_count, published and modified 
+     possible sorting's are rate_count, rate, object_count, view_count, published and modified 
      possible direction are true (ASC) and false (DESC)
      Note: 'object_count' makes only sense when combined with group_by_owner
  class_identifier (def: empty) limit fetch to a specific class(es)
@@ -83,7 +83,7 @@ Overview of supported parameters:
  limit (def: 10) limit number of objects returned
  group_by_owner (def: false) will give you result grouped by owner instead
                 and the node of the owner (user object) is
-                fetched intead
+                fetched instead
  main_parent_node_id (def: none) Limit result based on parent main node id
  main_parent_node_path (def: none) Alternative to above param, uses path string
                 instead for recursive fetch, format like $node.path_string: '/1/2/144/'
@@ -96,6 +96,4 @@ Overview of supported parameters:
  load_data_map (def: false) preload data_map 
  
  
- Look in autoloads/ezcontentrating.php for more comments on what the code does
-
-	
+ Look in autoloads/ezcontentrating.php for more comments on what the params does

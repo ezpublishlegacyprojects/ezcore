@@ -2,7 +2,7 @@
     eZ Core : tiny javascript library for ajax and stuff
     Created on: <28-Feb-2007 00:00:00 ar>
     
-    Copyright (c) 2007-2008 eZ Systems AS & André Rømcke
+    Copyright (c) 2007-2008 eZ Systems AS & Andrï¿½ Rï¿½mcke
     Licensed under the MIT License:
     http://www.opensource.org/licenses/mit-license.php
 
@@ -754,7 +754,7 @@ ez.element.eZextensions.prototype = {
 
 // Properties for the ez.ajax constructor
 ez.ajax.prototype = {
-    load: function( uri, post, pB, stream )
+    load: function( uri, post, pB )
     {
         // Function for re calling same ajax object with different url (string) and post(string) values
         if ( !this.xhr ) this.xhr = new XMLHttpRequest();
@@ -765,11 +765,6 @@ ez.ajax.prototype = {
         this.xhr.onreadystatechange = ez.fn.bind( this.onStateChange, this );
         this.onSend( post );
         this.xhr.send( ez.val( post ) ? post : null );
-        if ( stream ) this.streamInterval = setInterval( ez.fn.bind( this.streamChecker, this ), this.o.stream_interval );
-    },
-    streamChecker: function()
-    {
-        
     },
     onSend: function( post )
     {
@@ -804,10 +799,6 @@ ez.ajax.prototype = {
         if ( this.pb ) el ? this.pb( r, el ): this.pb( r );
     }
 };//ez.ajax.prototype
-
-ez.stream = ez.ajax;
-ez.stream.prototype = {
-};
 
 // Some IE 5 / 6 specific functionality
 if ( window.detachEvent && !window.opera && /MSIE [56]/.test( navigator.userAgent ) )

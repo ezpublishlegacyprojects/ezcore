@@ -7,14 +7,14 @@ Cronjob to hide / unhide nodes based on their publish / unpublish dates
 
   This cronjob works just like the publish / unpublish workflow in eZ Publish, 
   the difference being that it uses the hide / unhide functions on the nodes instead,
-  witch dosn't have any of the above drawbacks.
+  witch doesn't have any of the above drawbacks.
   The cronjob takes care of delayed hiding and unhiding nodes,
   ezcore/content/ezcorehandler.php takes care of actions on publish.
   
   All settings in commented in ezcore/settings/content.ini.append.php 
   under [HideSettings].
   
-  PS: do not run hide.php togheter with this script, hide action is handeled
+  PS: do not run hide.php together with this script, hide action is handled
   by this script
   
   
@@ -25,4 +25,5 @@ Cronjob to hide / unhide nodes based on their publish / unpublish dates
   
   Where eng is the name of your front end siteaccess.
   For more on how to run cronjobs look in the online eZ Publish doc.
+
 

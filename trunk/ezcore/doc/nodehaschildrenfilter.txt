@@ -7,7 +7,8 @@
  param 2: comparison clause, example: '!=', '=', '<=', '>=', '<', '>', default is '!='
  
  Full example for fetching nodes that don't have children nodes:
- ( in this case a 'is question anweared?' functionality )
+ ( in this case a 'is question answered?' functionality )
+ 
  
  {def $qa_list = fetch( 'content', 'tree', hash(
                                 'parent_node_id', 1503,

@@ -2,8 +2,8 @@ Cronjob to purge reverse proxy using HTTP PURGE
 
 
   This is a delayed reverse proxy purge that uses the static cache code introduced in 3.10
-  that enables you to do delayed ( so it dosn't slow down the publishing process )
-  static cleaning. So you can NOT run this cronjob thogheter with staticcache_clean.php
+  that enables you to do delayed ( so it doesn't slow down the publishing process )
+  static cleaning. So you can NOT run this cronjob together with staticcache_clean.php
 
   You need to enable staticcache.ini [CacheSettings] CronjobCacheClear
   And site.ini [ContentSettings] StaticCache
@@ -21,4 +21,5 @@ Cronjob to purge reverse proxy using HTTP PURGE
   
   Where eng is the name of your front end siteaccess.
   For more on how to run cronjobs look in the online eZ Publish doc.
+
 

@@ -1,15 +1,15 @@
 Template operator ezcss and ezcssfiles
 
 Uses eZPacker a script and css merger and packer.
-Reduces requests and bandwitch use to your server, especially speeds up first load on your site.
+Reduces requests and bandwidth use to your server, especially speeds up first load on your site.
 
 It is also possible to have dynamic code generators to return code.
-See classes/ezcorepackerfunctions.php for some simple examples.
+See classes/ezcoreservercallexamplefunctions.php for some simple examples.
 
 ezcssfiles returns array file paths and css content in cases where you use code generators.
 ezcss generates the xhtml markup for you so you don't need to do anything but calling it.
 
-Packed files are cached in your var folder and not regenerated untill one of the input files are modifed.
+Packed files are cached in your var folder and not regenerated untill one of the input files are modified.
 So you'll need this rewrite rule to allow these files in apache (same as Online Editor 5.0):
 
     RewriteRule ^/var/[^/]+/cache/(stylesheets|javascripts?)/.* - [L]
@@ -64,6 +64,6 @@ Use, if used with ezwebin:
                ezini('StylesheetSettings','SiteCSS','design.ini')
  ))}
  
-Generated html code:
+Generated xhtml code:
 
   <link rel="stylesheet" type="text/css" href="/trunk/var/ezwebin_site/cache/stylesheets/54d9eb3c312917bc2f5fd5b60985f80d_all.css" media="all" />

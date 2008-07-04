@@ -44,7 +44,6 @@ if ( isset($Params['interval']) && $Params['interval'] > 49 )
 else
     $callInterval = 500 * 1000;//default interval is every 0.5 seconds
 
-
 if ( $http->hasPostVariable( 'function_arguments' ) )
     $callList = explode( ':::', $http->postVariable( 'function_arguments' ) );
 else if ( isset($Params['function_arguments']) )

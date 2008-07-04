@@ -1,21 +1,21 @@
 Template operator ezscript and ezscriptfiles
 
 Uses eZPacker a script and css merger and packer.
-Reduces requests and bandwitch use to your server, especially speeds up first load on your site.
+Reduces requests and bandwidth use to your server, especially speeds up first load on your site.
 
-It is also possible to have dynamic code generators to return code.
-See classes/ezcorepackerfunctions.php for some simple examples.
+It is also possible to have code generators to return code on demand.
+See classes/ezcoreservercallexamplefunctions.php for some simple examples.
 
 ezscriptfiles returns array file paths and css content in cases where you use code generators.
 ezscript generates the xhtml markup for you so you don't need to do anything but calling it.
 
-Packed files are cached in your var folder and not regenerated untill one of the input files are modifed.
+Packed files are cached in your var folder and not regenerated until one of the input files are modified.
 So you'll need this rewrite rule to allow these files in apache (same as Online Editor 5.0):
 
     RewriteRule ^/var/[^/]+/cache/(stylesheets|javascripts?)/.* - [L]
 
 
-There is no overhead with these functions if you have the ezscript / ezscriptfiles inside cache-block.
+There is no overhead with these functions if you have the ezscript / ezscriptfile calls inside a cache-block.
 
 Definition of operators:
 
@@ -53,7 +53,7 @@ Use, if used with ezwebin:
  
   {ezscript( ezini( 'JavaScriptSettings', 'JavaScriptList', 'design.ini' ) )}
  
-Generated html code:
+Generated xhtml code:
 
   <script language="javascript" type="text/javascript" src="/trunk/var/ezwebin_site/cache/javascript/8d7ca1c40adf78ab109720746225bd3a.js"></script>
 

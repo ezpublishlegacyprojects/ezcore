@@ -32,6 +32,10 @@
 
 class eZCoreServerCallExampleFunctions
 {
+    /*
+     * Example function for returning time stamp
+     * + first function argument if present
+     */
     public static function time( $args )
     {
         if ( $args && isset( $args[0] ) )
@@ -39,10 +43,18 @@ class eZCoreServerCallExampleFunctions
         return time();
     }
 
+    /*
+     * Get keywords by input parameters
+     * Arguments:
+     * - keyword string to search for, but postvariable Keyword
+     *   is prefered because of encoding issues in urls
+     * - limit, how many suggestions to return, default ini value is used if not set
+     * - class id, serach is restricted to class id if set
+     */
     public static function keyword( $args )
     {
         $ezcoreINI = eZINI::instance( 'ezcore.ini' );
-        $http    = eZHTTPTool::instance();
+        $http      = eZHTTPTool::instance();
         
         $keywordLimit            = 30;
         $keywordSuggestionsArray = $ezcoreINI->variable( 'Keyword', 'SuggestionsArray' );
@@ -98,13 +110,40 @@ class eZCoreServerCallExampleFunctions
         return $keywords;
     }
 
+    /*
+     * Generates the javascript needed to do server calls directly from javascript
+    */
     public static function serverCallInit()
     {
         $url = self::getIndexDir() . 'ezcore/call/';
-        return "ez.serverCallUrl = $url;
+        return "ez.serverCallUrl = '$url';
 ez.server = {
-
+    call: function( className, functionName, args, callback, postData )
+    {
+        args = args.join !== undefined && args.length ? '::' + args.join('::') : '';
+        var url = ez.serverCallUrl + className + '::' + functionName + args, a = ez.ajax({'onError': ez.fn.bind( ez.server.errorCallback, this, callback ) });
+        a.load( url, postData || null, ez.fn.bind( ez.server.doneCallBack, this, callback ) );
+    },
+    doneCallBack: function( cb, r )
+    {
+        if ( cb && cb.call !== undefined )
+        {
+            var res = ez.server.parseResponse( r )
+            cb.call( this, res.content, 0, res.error_text );
+        }
+    },
+    errorCallback: function( cb, code, text )
+    {
+        if ( cb && cb.call !== undefined ) cb.call( this, '', code, text );
+    },
+    parseResponse: function( r )
+    {
+        ez.script( 'ez.server.tmpResponse=' + r.responseText + ';' );
+        return ez.server.tmpResponse || {content: '', error_text: 'Invalid json response'};
+    }
 };
+// Example code:
+//ez.server.call('ezcore', 'time', [], function( time ){ alert( time ) } );
 ";
     }
 
