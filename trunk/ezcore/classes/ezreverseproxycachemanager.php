@@ -29,11 +29,23 @@
 
 class eZReverseProxyCacheManager
 {
-    /*!
-        Purges the given relative URL on the reverse proxy server. 
-        E.g. /en/products/url_alias_for_page
-        Returns null if the purge fails, if it suceeds it will return the response (a string)
-    */
+    /**
+     * Constructor
+     *
+     */
+    function __construct()
+    {
+    }
+
+    /**
+     * Purges the given relative URL on the reverse proxy server. 
+     * E.g. /en/products/url_alias_for_page
+     * Returns null if the purge fails, if it suceeds it will return the response (a string)
+     * 
+     * @static
+     * @param string $path
+     * @return mixed
+     */
     static function purgeURL( $path )
     {
 
