@@ -2,6 +2,7 @@ Template operator ezcss and ezcssfiles
 
 Uses eZPacker a script and css merger and packer.
 Reduces requests and bandwidth use to your server, especially speeds up first load on your site.
+This functionality is used in Online Editor 5.0.
 
 It is also possible to have dynamic code generators to return code.
 See classes/ezcoreservercallexamplefunctions.php for some simple examples.

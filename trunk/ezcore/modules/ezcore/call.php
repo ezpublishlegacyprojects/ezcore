@@ -36,7 +36,6 @@ include_once( 'extension/ezcore/classes/ezajaxcontent.php' );
 
 $http           = eZHTTPTool::instance();
 $callType       = isset($Params['type']) ? $Params['type'] : 'call';
-$contentType    = isset($Params['content_type']) && $Params['content_type'] ? $Params['content_type'] : 'json';
 $callFnList     = array();
 
 if ( isset($Params['interval']) && $Params['interval'] > 49 )
@@ -60,20 +59,33 @@ if ( $http->hasPostVariable( 'stream_seperator' ) )
     $stramSeperator = $http->postVariable( 'stream_seperator' );
 else
     $stramSeperator = '@END#';
-    
-//prepere calls
-foreach( $callList as $call )
-{
-    $callFnList[] = eZCoreServerCall::getInstance( explode( '::', $call ), true, true );
-}
 
-$callFnListCount = count( $callFnList ) -1;
+$contentType = eZAjaxContent::getHttpAccept();
 
 // set headers
 if ( $contentType === 'xml' )
-    header("Content-Type: text/xml; charset=utf-8");
-else
-    header("Content-Type: text/javascript; charset=utf-8");
+    header('Content-Type: text/xml; charset=utf-8');
+else if ( $contentType === 'json' )
+    header('Content-Type: text/javascript; charset=utf-8');
+
+if ( !$callList )
+{
+    header( $_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error' );
+    $response = array( 'error_text' => 'No server call defined', 'content' => '' );
+    echo eZAjaxContent::autoEncode( $response, $contentType );
+    eZExecution::cleanExit();
+    return;
+}
+
+
+//prepere calls
+foreach( $callList as $call )
+{
+    $temp = eZCoreServerCall::getInstance( explode( '::', $call ), true, true );
+    $callFnList[] = $temp === null ? $call : $temp;
+}
+
+$callFnListCount = count( $callFnList ) -1;
 
 // do calls
 if ( $callType === 'stream' )
@@ -115,9 +127,9 @@ function multipleeZCoreServerCalls( $calls, $contentType = 'json' )
         }
         else
         {
-            $response['error_text'] = 'not a valid server call';
+            $response['error_text'] = 'Not a valid eZCoreServerCall: "' . $call . '"';
         }
-        $r[] = $contentType === 'xml' ? eZAjaxContent::xmlEncode( $response ) : eZAjaxContent::jsonEncode( $response );
+        $r[] = eZAjaxContent::autoEncode( $response, $contentType );
     }
     return $r;
 }

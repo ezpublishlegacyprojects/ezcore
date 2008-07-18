@@ -67,7 +67,72 @@ class eZAjaxContent
         }
         return self::$instance;
     }
-    
+
+    /**
+     * Gets the first most prefered response type as defined by http_accept
+     * uses post and get parameter if present, if not falls back to the one
+     * defined in http header. First parameter lets you define fallback value
+     * if none of the alternatives in second parameter is found. Second parameter
+     * lets you limit the allowes types with a alias hash. xhtml, json, xml and
+     * text are default allowed types.
+     *
+     * @param string $default
+     * @param array $aliasList
+     * @return string
+     */
+    public static function getHttpAccept( $default = 'xhtml', $aliasList = array( 'html' => 'xhtml', 'json' => 'json', 'javascript' => 'json', 'xml' => 'xml', 'text' => 'text' ) )
+    {
+        if ( isset($_POST['http_accept']) )
+            $acceptList = split( ',', $_POST['http_accept'] );
+        else if ( isset($_POST['HTTP_ACCEPT']) )
+            $acceptList = split( ',', $_POST['HTTP_ACCEPT'] );
+        else if ( isset($_GET['http_accept']) )
+            $acceptList = split( ',', $_GET['http_accept'] );
+        else if ( isset($_GET['HTTP_ACCEPT']) )
+            $acceptList = split( ',', $_GET['HTTP_ACCEPT'] );
+
+        if ( !isset( $acceptList ) )
+            $acceptList = split( ',', $_SERVER['HTTP_ACCEPT'] );
+
+        foreach( $acceptList as $accept )
+        {
+            foreach( $aliasList as $alias => $returnType )
+            {
+                if ( strpos( $accept, $alias ) !== false )
+                {
+                    $default = $returnType;
+                    break 2;
+                }
+            }
+        }
+        return $default;
+    }
+
+    /**
+     * Encodes the content based on http accept values, more on
+     * this on the getHttpAccept function.
+     * Will simply implode the return value if array and not xml or 
+     * json is prefered return type.
+     *
+     * @param mixed $ret
+     * @param string $type
+     * @return string
+     */
+    public static function autoEncode( $ret, $type = null )
+    {
+        if ( $type === null )
+            $type = self::getHttpAccept( );
+
+        if ( $type === 'xml' )
+            return self::xmlEncode( $ret );
+        else if ( $type === 'json' )
+            return self::jsonEncode( $ret );
+        else if ( is_array( $ret ) )
+            return implode(',', $ret );
+        else
+            return $ret;
+    }
+
     /**
      * Function for encoding content object(s) or node(s) to simplified
      * json objects, xml or array hash
@@ -98,7 +163,6 @@ class eZAjaxContent
             return self::jsonEncode( $ret );
         else
             return $ret;
-        
     }
     
     /**
@@ -128,6 +192,16 @@ class eZAjaxContent
         {
             $node          = $obj;
             $contentObject = $obj->attribute( 'object' );
+        }
+        else if( isset( $params['fetchNodeFunction'] ) && method_exists( $obj, $params['fetchNodeFunction'] ) )
+        {
+            // You can supply fetchNodeFunction parameter to be able to support other node related classes 
+            $node = call_user_func( array( $obj, $params['fetchNodeFunction'] ) );
+            if ( !$node instanceof eZContentObjectTreeNode )
+            {
+                return '';
+            }
+            $contentObject = $node->attribute( 'object' );
         }
         else if ( is_array( $obj ) )
         {

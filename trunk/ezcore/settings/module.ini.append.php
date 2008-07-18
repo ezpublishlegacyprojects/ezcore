@@ -2,5 +2,7 @@
 
 [ModuleSettings]
 ExtensionRepositories[]=ezcore
+ExtensionAjaxRepositories[]=ezcore
+ModuleList[]=ezcore
 
 */ ?>

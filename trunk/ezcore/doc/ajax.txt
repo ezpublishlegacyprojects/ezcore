@@ -1,0 +1,52 @@
+Misc ajax functionality
+
+
+Index:
+* index_ajax.php
+* ezcore/call
+* ezcoreservercall.php
+* ezajaxcontent.php
+
+
+index_ajax.php:
+
+	A light ajax index.php for your ajax modules, checks access to siteaccess
+	and module / view and gives response according to HTTP_ACCEPT header.
+	Supported responses: xml, json and text/xhtml
+	
+	Install:
+    1. copy file from root of extension to root of eZ Publish installation.
+    2. Add this to your apache rewrite rules:
+       RewriteRule ezcore/.* /index_ajax.php [L]
+       
+    Using on your own modules:
+    0. This example uses myextension and mymodule as extension and module name
+    1. Add this to module.ini:
+       [ModuleSettings]
+       ExtensionAjaxRepositories[]=myextension
+    2. Add Rewrite rule
+       RewriteRule mymodule/.* /index_ajax.php [L]
+
+
+ezcore/call:
+
+    A simple to use (module) view where you register your own php classes
+    or templates that should be callable to the world.
+    
+    Live example on php class and template use can be found in ezcore.ini in this extension!
+
+ezcoreservercall.php:
+
+	The php code that does all the code for the ezcore/call, also used by the ezpacker.php
+	code (ezcss and ezscript template operators) for custom code generators (used for i18n 
+	string generator in Online Editor 5.0).
+
+ezajaxcontent.php:
+
+    Functions for encoding mixed data to json/xml/text. Also functionality for simplifying
+    node(s) to a hash so the can be encoded.
+    Also function for figguring out what kind of content type the client accepts to be able
+    to do auto encoding based on prefered content type.
+    Template operators that uses this class: node_encode, xml_encode and json_encode
+
+
