@@ -12,7 +12,12 @@ index_ajax.php:
 
 	A light ajax index.php for your ajax modules, checks access to siteaccess
 	and module / view and gives response according to HTTP_ACCEPT header.
+	Is aproximently 2-4 times faster then normal index.php loading, and 
+	you avoid getting a large and slow 404 repsonse if something went wronge..
 	Supported responses: xml, json and text/xhtml
+
+	Note: ActiveAccessExtenions setting is for performance reasons disabled, you can however
+	re activate it by uncommenting "eZExtension::activateExtensions('access');" at line ~149.
 	
 	Install:
     1. copy file from root of extension to root of eZ Publish installation.
