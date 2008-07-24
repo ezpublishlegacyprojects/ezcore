@@ -27,10 +27,10 @@
 //
 
 /*
- * Examples on eZCoreServerCall Functions
+ * Some eZCoreServerCall Functions
  */
 
-class eZCoreServerCallExampleFunctions
+class eZCoreServerCallFunctions
 {
     /*
      * Example function for returning time stamp
@@ -113,28 +113,28 @@ class eZCoreServerCallExampleFunctions
     /*
      * Generates the javascript needed to do server calls directly from javascript
     */
-    public static function serverCallInit()
+    public static function init()
     {
-        $url = self::getIndexDir() . 'ezcore/call/';
-        return "ez.serverCallUrl = '$url';
-ez.server = {
-    call: function( className, functionName, args, callback, postData )
+        $url = self::getIndexDir() . 'ezcore/';
+        return "ez.server = {
+    url : '$url',
+    call: function( callName, args, callback, postData )
     {
         args = args.join !== undefined && args.length ? '::' + args.join('::') : '';
-        var url = ez.serverCallUrl + className + '::' + functionName + args, a = ez.ajax({'onError': ez.fn.bind( ez.server.errorCallback, this, callback ) });
+        var url = ez.server.url + 'call/' + callName + args, a = ez.ajax({'onError': ez.fn.bind( ez.server.errorCallback, this, callback ) });
         a.load( url, postData || null, ez.fn.bind( ez.server.doneCallBack, this, callback ) );
     },
     doneCallBack: function( cb, r )
     {
         if ( cb && cb.call !== undefined )
         {
-            var res = ez.server.parseResponse( r )
+            var res = ez.server.parseResponse( r );
             cb.call( this, res.content, 0, res.error_text );
         }
     },
-    errorCallback: function( cb, code, text )
+    errorCallback: function( cb, code, error_text )
     {
-        if ( cb && cb.call !== undefined ) cb.call( this, '', code, text );
+        if ( cb && cb.call !== undefined ) cb.call( this, '', code, error_text );
     },
     parseResponse: function( r )
     {
@@ -143,7 +143,7 @@ ez.server = {
     }
 };
 // Example code:
-//ez.server.call('ezcore', 'time', [], function( time ){ alert( time ) } );
+//ez.server.call('ezcore::time', [], function( time, n, err ){ alert( time + err ) } );
 ";
     }
 

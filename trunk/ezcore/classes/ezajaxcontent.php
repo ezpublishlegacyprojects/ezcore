@@ -127,10 +127,15 @@ class eZAjaxContent
             return self::xmlEncode( $ret );
         else if ( $type === 'json' )
             return self::jsonEncode( $ret );
-        else if ( is_array( $ret ) )
-            return implode(',', $ret );
         else
-            return $ret;
+            return self::textEncode( $ret );
+    }
+    
+    public static function textEncode( $mix )
+    {
+        if ( is_array( $mix ) )
+            return implode(',', array_map( array('eZAjaxContent', 'textEncode'), array_filter( $mix ) ) );
+        return $mix;
     }
 
     /**
@@ -183,12 +188,7 @@ class eZAjaxContent
             $node          = $obj->attribute( 'main_node' );
             $contentObject = $obj;
         }
-        else if ( $obj instanceof eZContentObjectTreeNode ) 
-        {
-            $node          = $obj;
-            $contentObject = $obj->attribute( 'object' );
-        }
-        else if ( $obj instanceof eZFindResultNode ) 
+        else if ( $obj instanceof eZContentObjectTreeNode || $obj instanceof eZFindResultNode ) 
         {
             $node          = $obj;
             $contentObject = $obj->attribute( 'object' );

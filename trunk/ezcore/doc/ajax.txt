@@ -44,7 +44,7 @@ ezcoreservercall.php:
 ezajaxcontent.php:
 
     Functions for encoding mixed data to json / xml / text(needs some work). Also functionality for simplifying
-    node(s) to a hash so the can be encoded.
+    node(s) to a hash so they can be encoded.
     Also function for figuring out what kind of content type the client accepts to be able
     to do auto encoding based on preferred content type.
     json encoding uses the php json extension included in php 5.2 and higher or fallback 

@@ -5,7 +5,7 @@ Reduces requests and bandwidth use to your server, especially speeds up first lo
 This functionality is used in Online Editor 5.0.
 
 It is also possible to have dynamic code generators to return code.
-See classes/ezcoreservercallexamplefunctions.php for some simple examples.
+See classes/ezcoreservercallfunctions.php for some simple examples.
 
 ezcssfiles returns array file paths and css content in cases where you use code generators.
 ezcss generates the xhtml markup for you so you don't need to do anything but calling it.

@@ -137,16 +137,16 @@ require_once 'pre_check.php';
 
 // Check for extension
 eZExtension::activateExtensions( 'default' );
-// Extension check end
 
 require_once 'access.php';
-
 $access = accessType( $uri,
                       eZSys::hostname(),
                       eZSys::serverPort(),
                       eZSys::indexFile() );
 $access = changeAccess( $access );
-$GLOBALS['eZCurrentAccess'] = $access;
+
+// Check for new extension loaded by siteaccess ( disabled for performance reasons )
+//eZExtension::activateExtensions( 'access' );
 
 $extensionModule = $uri->element();
 if ( $extensionModule === '' || strpos( $extensionModule, '.php' ) !== false  )
@@ -167,7 +167,7 @@ if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
 
 eZModule::setGlobalPathList( $globalModuleRepositories );
 
-$module = eZModule::exists( $extensionModule );
+$module = eZModule::findModule( $extensionModule );
 if ( !$module instanceof eZModule )
 {
     exitWithInternalError( "'$extensionModule' module does not exist, or is not a valid ajax module." );
