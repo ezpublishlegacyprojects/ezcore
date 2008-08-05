@@ -42,18 +42,18 @@ ezcore/call:
 
 ezcoreservercall.php:
 
-	The php code that does all the code for the ezcore/call, also used by the ezpacker.php
-	code (ezcss and ezscript template operators) for custom code generators (used for i18n 
-	string generator in Online Editor 5.0).
+    The php code that does all the code for the ezcore/call, also used by the ezpacker.php
+    code (ezcss and ezscript template operators) for custom code generators (used for i18n 
+    string generator in Online Editor 5.0).
 
 ezajaxcontent.php:
 
-    Functions for encoding mixed data to json / xml / text(needs some work). Also functionality for simplifying
+    Functions for encoding mixed data to json / xml / text, and functionality for simplifying
     node(s) to a hash so they can be encoded.
     Also function for figuring out what kind of content type the client accepts to be able
     to do auto encoding based on preferred content type.
     json encoding uses the php json extension included in php 5.2 and higher or fallback 
-    to php version if not present.
+    to a php version if not present.
     Template operators that uses this class: node_encode, xml_encode and json_encode
 
 
