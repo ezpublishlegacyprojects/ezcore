@@ -475,8 +475,7 @@ var ez = {
         this.o = ez.object.extend({ 
             'accept': 'application/json,application/xml,application/xhtml+xml,text/javascript,text/xml,text/html,*/*',
             'requestedWith': 'XMLHttpRequest',
-            'charset': 'iso-8859-1',
-            'stream_interval': 500
+            'charset': 'iso-8859-1'
         }, o || {}, true);
         if ( uri ) this.load( uri, this.o.postBody || null, postBack );
         return this;

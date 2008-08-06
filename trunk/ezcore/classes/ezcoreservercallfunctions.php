@@ -113,44 +113,55 @@ class eZCoreServerCallFunctions
     /*
      * Generates the javascript needed to do server calls directly from javascript
     */
-    public static function init()
+    public static function server()
     {
         $url = self::getIndexDir() . 'ezcore/';
         return "ez.server = {
     url : '$url',
-    call: function( callName, args, callback, postData )
+    seperator: '@SEPERATOR$',
+    call: function( callArgs, callBack, postData )
     {
-        args = args.join !== undefined && args.length ? '::' + args.join('::') : '';
-        var url = ez.server.url + 'call/' + callName + args, a = ez.ajax({'onError': ez.fn.bind( ez.server.errorCallback, this, callback ) });
-        a.load( url, postData || null, ez.fn.bind( ez.server.doneCallBack, this, callback ) );
+        callArgs = callArgs.join !== undefined ? callArgs.join( ez.server.seperator ) : callArgs;
+        var url = ez.server.url + 'call/' + encodeURIComponent( callArgs ), a = ez.ajax({'onError': ez.fn.bind( ez.server.error, this, callBack ) });
+        a.load( url, postData || null, ez.fn.bind( ez.server.done, this, callBack ) );
     },
-    doneCallBack: function( cb, r )
+    done: function( cb, r )
     {
         if ( cb && cb.call !== undefined )
         {
-            var res = ez.server.parseResponse( r );
-            cb.call( this, res.content, 0, res.error_text );
+            if ( r.responseText.indexOf( '<title>kernel (1) /' ) !== -1 )
+                return ez.server.error( cb, 1, 'Access denied' );
+            ez.array.forEach( r.responseText.split( ez.server.seperator ), function(string){
+                var res = ez.server.parse( string );
+                if ( res )
+                    cb.call( this, res.content, 0, res.error_text );
+                else
+                    cb.call( this, '', 10, 'Invalid response' );
+            });
         }
     },
-    errorCallback: function( cb, code, error_text )
+    error: function( cb, code, error_text )
     {
         if ( cb && cb.call !== undefined ) cb.call( this, '', code, error_text );
     },
-    parseResponse: function( r )
+    parse: function( string )
     {
-        ez.script( 'ez.server.tmpResponse=' + r.responseText + ';' );
-        return ez.server.tmpResponse || {content: '', error_text: 'Invalid json response'};
+        ez.server.response = false;
+        ez.script( 'ez.server.response=' + string + ';' );
+        return ez.server.response;
     }
 };
 // Example code:
-//ez.server.call('ezcore::time', [], function( time, n, err ){ alert( time + err ) } );
+// ez.server.call( 'ezcore::time', function( content, errorCode, errorText ){ alert( content + errorText ) } );
+// Example code with multiple calls:
+// ez.server.call( ['ezcore::time','ezcore::keyword'], function( content, errorCode, errorText ){ alert( content + errorText ) } );
 ";
     }
 
     public static function getCacheTime( $functionName )
     {
         // this data only expires when this timestamp is increased
-        return 1211555036;
+        return 1218018250;
     }
 
     protected static function getIndexDir()

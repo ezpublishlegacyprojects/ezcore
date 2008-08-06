@@ -38,36 +38,42 @@ $http           = eZHTTPTool::instance();
 $callType       = isset($Params['type']) ? $Params['type'] : 'call';
 $callFnList     = array();
 
-if ( isset($Params['interval']) && $Params['interval'] > 49 )
-    $callInterval = $Params['interval'] * 1000; // intervall in milliseconds, minimum is 0.05 seconds 
-else
-    $callInterval = 500 * 1000;//default interval is every 0.5 seconds
-
-if ( $http->hasPostVariable( 'function_arguments' ) )
-    $callList = explode( ':::', $http->postVariable( 'function_arguments' ) );
-else if ( isset($Params['function_arguments']) )
-    $callList = explode( ':::', $Params['function_arguments'] );
-else
-    $callList = array();
-
 if ( $http->hasPostVariable( 'call_seperator' ) )
     $callSeperator = $http->postVariable( 'call_seperator' );
 else
-    $callSeperator = '@SEPERATOR#';
+    $callSeperator = '@SEPERATOR$';
 
 if ( $http->hasPostVariable( 'stream_seperator' ) )
     $stramSeperator = $http->postVariable( 'stream_seperator' );
 else
-    $stramSeperator = '@END#';
+    $stramSeperator = '@END$';
+
+if ( $http->hasPostVariable( 'function_arguments' ) )
+{
+    $callList = explode( $callSeperator, $http->postVariable( 'function_arguments' ) );
+}
+else if ( isset( $Params['function_arguments'] ) )
+{
+    $callList = explode( $callSeperator, $Params['function_arguments'] );
+}
+else
+{
+    $callList = array();
+}
 
 $contentType = eZAjaxContent::getHttpAccept();
 
-// set headers
+// set http headers
 if ( $contentType === 'xml' )
+{
     header('Content-Type: text/xml; charset=utf-8');
+}
 else if ( $contentType === 'json' )
+{
     header('Content-Type: text/javascript; charset=utf-8');
+}
 
+// abort if no calls where found
 if ( !$callList )
 {
     header( $_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error' );
@@ -78,7 +84,7 @@ if ( !$callList )
 }
 
 
-//prepere calls
+// prepere calls
 foreach( $callList as $call )
 {
     $temp = eZCoreServerCall::getInstance( explode( '::', $call ), true, true );
@@ -90,9 +96,22 @@ $callFnListCount = count( $callFnList ) -1;
 // do calls
 if ( $callType === 'stream' )
 {
+    if ( isset( $Params['interval'] )
+      && is_numeric( $Params['interval'] )
+      && $Params['interval'] > 49 )
+    {
+        // intervall in milliseconds, minimum is 0.05 seconds
+        $callInterval = $Params['interval'] * 1000;
+    } 
+    else
+    {
+        // default interval is every 0.5 seconds
+        $callInterval = 500 * 1000;
+    }
+
     $endTime = time() + 29;
     while ( @ob_end_clean() );
-    // flush 256 bytes first to force ie to not buffer the stream
+    // flush 256 bytes first to force IE to not buffer the stream
     if ( strpos( eZSys::serverVariable( 'HTTP_USER_AGENT' ), 'MSIE' ) !== false )
     {
         echo '                                                  ';
@@ -101,7 +120,7 @@ if ( $callType === 'stream' )
         echo '                                                  ';
         echo "                                                  \n";
     }
-    //set_time_limit(65);
+    // set_time_limit(65);
     while( time() < $endTime )
     {
         echo $stramSeperator . implode( $callSeperator, multipleeZCoreServerCalls( $callFnList, $contentType ) );

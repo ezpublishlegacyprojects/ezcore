@@ -10,16 +10,16 @@ Index:
 
 index_ajax.php:
 
-	A light ajax index.php for your ajax modules, checks access to siteaccess
-	and module / view and gives response according to HTTP_ACCEPT header.
-	Is aproximently 2-4 times faster then normal index.php loading, and 
-	you avoid getting a large and slow 404 repsonse if something went wronge..
-	Supported responses: xml, json and text/xhtml
+    A light ajax index.php for your ajax modules, checks access to siteaccess
+    and module / view and gives response according to HTTP_ACCEPT header.
+    Is approximately 2-4 times faster then normal index.php loading, and 
+    you avoid getting a large and slow 404 response if something went wronge..
+    Supported responses: xml, json and text/xhtml
 
-	Note: ActiveAccessExtenions setting is for performance reasons disabled, you can however
-	re activate it by uncommenting "eZExtension::activateExtensions('access');" at line ~149.
-	
-	Install:
+    Note: ActiveAccessExtenions setting is for performance reasons disabled, you can however
+    re activate it by uncommenting "eZExtension::activateExtensions('access');" at line ~149.
+    
+    Install:
     1. copy file from root of extension to root of eZ Publish installation.
     2. Add this to your apache rewrite rules:
        RewriteRule ezcore/.* /index_ajax.php [L]
@@ -38,13 +38,31 @@ ezcore/call:
     A simple to use (module) view where you register your own php classes
     or templates that should be callable to the world.
     
-    Live example on php class and template use can be found in ezcore.ini in this extension!
+    Working examples on php class and template use can be found in ezcore.ini
+    
+    Use from javascript using the bundled ezcore js library:
+      1. First load the needed javascript using the ezscript template operator:
+         {ezscript(array('ez_core.js', 'ezcore::server'))}
+
+      2a. when this is loaded you can call your server code like this:
+         ez.server.call( 'ezcore::time', myCallBackFunction );
+
+      2b. Alternatively you can call several server functions at once to save time (and requests to your server):
+         ez.server.call( ['ezcore::time','ezcore::keyword'], myCallBackFunction );
+
+      3. Create your call back function to handle the response from the server:
+        function myCallBackFunction( content, errorCode, errorText )
+        { 
+            // errorCode is 0 if everything went ok
+            alert( content + errorCode + errorText );
+        }
+      
 
 ezcoreservercall.php:
 
     The php code that does all the code for the ezcore/call, also used by the ezpacker.php
     code (ezcss and ezscript template operators) for custom code generators (used for i18n 
-    string generator in Online Editor 5.0).
+    string generator in Online Editor 5.0 for tinyMCE translation integration).
 
 ezajaxcontent.php:
 
@@ -55,5 +73,3 @@ ezajaxcontent.php:
     json encoding uses the php json extension included in php 5.2 and higher or fallback 
     to a php version if not present.
     Template operators that uses this class: node_encode, xml_encode and json_encode
-
-

@@ -79,7 +79,7 @@ $ViewList['get_children'] = array(
 $ViewList['call'] = array(
     'functions' => array( 'call' ),
     'script' => 'call.php',
-    'params' => array( 'function_arguments', 'content_type', 'type', 'interval' )
+    'params' => array( 'function_arguments', 'type', 'interval' )
     );
     
 

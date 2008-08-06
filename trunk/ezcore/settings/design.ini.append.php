@@ -4,9 +4,9 @@
 DesignExtensions[]=ezcore
 
 [JavaScriptSettings]
-JavaScriptList[]=ez_core.js
-JavaScriptList[]=animation.js
-JavaScriptList[]=accordion.js
+#JavaScriptList[]=ez_core.js
+#JavaScriptList[]=animation.js
+#JavaScriptList[]=accordion.js
 
 
 
