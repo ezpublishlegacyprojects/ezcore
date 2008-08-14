@@ -161,7 +161,7 @@ class eZPacker
             // if $file is array, concat it to the file array and continue
             if ( $file && is_array( $file ) )
             {
-                $fileArray = array_merge( $fileArray, $file );
+                $fileArray = array_merge( $file, $fileArray );
                 continue;
             }
             else if ( !$file )
