@@ -45,11 +45,10 @@ $fetchClasses = array_merge( array_keys( $hideAttributeArray ), array_keys( $unh
 
 $currrentDate = time();
 
-$offset = 0;
-$limit = 20;
-
 foreach( $rootNodeIDList as $nodeID )
 {
+    $offset = 0;
+    $limit = 20;
     $rootNode = eZContentObjectTreeNode::fetch( $nodeID );
 
     while( true )
