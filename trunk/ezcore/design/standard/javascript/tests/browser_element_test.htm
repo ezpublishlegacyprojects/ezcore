@@ -278,14 +278,14 @@
         <p id="test_case_16">
             <span>1</span>
             <span>2</span>
-            <span>3</span>
-            <a>4</a>
+            <a>3</a>
+            <span>4</span>
         </p>
         <script type="text/javascript" language="JavaScript">
-        var test_case_16 = ez.$$('#test_case_16 span:last-child');
+        var test_case_16 = ez.$$('#test_case_16 span:last-child')[0].el.innerHTML;
         </script>
         <script type="text/javascript" language="JavaScript">
-        debug( 'test_case_16', "ez.$$('#test_case_16 span:last-child').length", 0, test_case_16.length );
+        debug( 'test_case_16', "ez.$$('#test_case_16 span:last-child')[0].innerHTML", '4', test_case_16 );
         </script>
     </div>
 
