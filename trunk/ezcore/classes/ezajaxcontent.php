@@ -247,7 +247,7 @@ class eZAjaxContent
         $ret['class_id']         = (int) $contentObject->attribute( 'contentclass_id' );
         $ret['class_name']       = $contentObject->attribute( 'class_name' );
 
-        if ( $node instanceof eZContentObjectTreeNode )
+        if ( $node )
         {
             // optimization for eZ Publish 4.1 (avoid fetching class)
             if ( $node->hasAttribute( 'is_container' ) )
