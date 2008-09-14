@@ -82,6 +82,11 @@ $ViewList['call'] = array(
     'params' => array( 'function_arguments', 'type', 'interval' )
     );
     
+$ViewList['run'] = array(
+    'functions' => array( 'run' ),
+    'script' => 'run.php',
+    'params' => array( )
+    );
 
 
 
@@ -95,6 +100,7 @@ $FunctionList['unrelate'] = array();
 $FunctionList['get_related'] = array();
 $FunctionList['get_children'] = array();
 $FunctionList['call'] = array();
+$FunctionList['run'] = array();
 
 
 

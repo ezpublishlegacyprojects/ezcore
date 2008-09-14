@@ -227,7 +227,21 @@ if ( !$hasAccess )
 }
 
 $GLOBALS['eZRequestedModule'] = $module;
-$moduleResult = $module->run( $function_name, $uri->elements( false ) );
+$moduleResult = $module->run( $function_name, $uri->elements( false ), false, $uri->userParameters() );
+
+
+$classname = eZINI::instance()->variable( "OutputSettings", "OutputFilterName" );
+if( class_exists( $classname ) )
+{
+    $moduleResult['content'] = call_user_func( array ( $classname, 'filter' ), $moduleResult['content'] );
+}
+
+$out = ob_get_clean();
+echo trim( $out );
+
+eZDB::checkTransactionCounter();
+
+echo $moduleResult['content'];
 
 eZExecution::cleanExit();
 
