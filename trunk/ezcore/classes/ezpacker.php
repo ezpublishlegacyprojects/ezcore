@@ -117,7 +117,7 @@ class eZPacker
         if ( self::$cacheDir === null )
         {
             $sys = eZSys::instance();
-            self::$cacheDir = $sys->cacheDirectory() . '/';
+            self::$cacheDir = $sys->cacheDirectory() . '/public/';
             self::$wwwDir = $sys->wwwDir() . '/';
         }
     }
@@ -130,7 +130,7 @@ class eZPacker
      of the valid files in $file_array and the packlevel. 
      The whole argument is used instead of file path on js/ css generators in the cache hash.
      */
-    static function packFiles( $fileArray, $cacheSubPath = '', $fileExtension = '.js', $packLevel = 2 )
+    static function packFiles( $fileArray, $subPath = '', $fileExtension = '.js', $packLevel = 2 )
     {
         if ( !$fileArray )
         {
@@ -149,7 +149,7 @@ class eZPacker
         $packerInfo = array(
             'file_extension' => $fileExtension,
             'pack_level' => $packLevel,
-            'sub_path' => $cacheSubPath,
+            'sub_path' => $subPath,
             'cache_dir' => self::$cacheDir,
             'www_dir' => self::$wwwDir,
         );
@@ -211,7 +211,7 @@ class eZPacker
             // or is it a relative path
             else
             {
-                $file = $cacheSubPath . $file;
+                $file = $subPath . $file;
                 $triedFiles = array();
                 $match = eZTemplateDesignResource::fileMatch( $bases, '', $file, $triedFiles );
 
@@ -251,7 +251,7 @@ class eZPacker
 
         // generate cache file name and path
         $cacheName = md5( $cacheName . $packLevel ) . $fileExtension;
-        $cachePath = self::$cacheDir . $cacheSubPath;
+        $cachePath = self::$cacheDir . $subPath;
 
         if ( file_exists( $cachePath . $cacheName ) )
         {

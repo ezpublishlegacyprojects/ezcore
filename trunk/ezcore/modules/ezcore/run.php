@@ -34,6 +34,41 @@
 $uriParams = $Params['Parameters'];
 $userParams = $Params['UserParameters'];
 
+
+// these functions are only set if called via index_ajax.php
+if ( !function_exists( 'hasAccessToView' ) )
+{
+    function exitWithInternalError( $errorText )
+    {
+        header( $_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error' );
+        include_once( 'extension/ezcore/classes/ezajaxcontent.php' );
+        $contentType = eZAjaxContent::getHttpAccept();
+    
+        // set headers
+        if ( $contentType === 'xml' )
+            header('Content-Type: text/xml; charset=utf-8');
+        else if ( $contentType === 'json' )
+            header('Content-Type: text/javascript; charset=utf-8');
+    
+        echo eZAjaxContent::autoEncode( array( 'error_text' => $errorText, 'content' => '' ), $contentType );
+        eZExecution::cleanExit();
+    }
+    
+    function hasAccessToView( eZUser $user, eZModule $module, $view = false, $policyCheckOmitList = false )
+    {
+        if ( $policyCheckOmitList !== false )
+        {
+            $moduleName = $module->attribute('name');
+            if ( in_array( $moduleName, $policyCheckOmitList) )
+                return true;
+            if ( $view !== false && in_array( $moduleName . '/' . $view, $policyCheckOmitList) )
+                return true;
+        }
+        return $user->hasAccessToView( $module, $view, $params );
+    }
+}// if ( !function_exists( 'hasAccessToModule' ) )
+
+
 if ( !isset( $uriParams[1] ) )
 {
     exitWithInternalError( "Did not find module info in url." );
@@ -43,11 +78,11 @@ if ( !isset( $uriParams[1] ) )
 // set global module repositories in case this is called from index_ajax.php
 eZModule::setGlobalPathList( eZModule::activeModuleRepositories() );
 
-
-$module = eZModule::findModule( array_shift( $uriParams ) );
+$extensionModule = array_shift( $uriParams );
+$module = eZModule::findModule( $extensionModule );
 if ( !$module instanceof eZModule )
 {
-    exitWithInternalError( "'$extensionModule' module does not exist, or is not a valid ajax module." );
+    exitWithInternalError( "'$extensionModule' module does not exist, or is not a valid module." );
     return;
 }
 
@@ -59,7 +94,20 @@ if ( !isset( $moduleViews[ $function_name ] ) )
     return;
 }
 
+// check access to view
+$ini          = eZINI::instance();
+$currentUser  = eZUser::currentUser();
+if ( !hasAccessToView( $currentUser, $module, $function_name, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
+{
+    exitWithInternalError( "User does not have access to the $extensionModule/$function_name policy." );
+    return;
+}
+
 $GLOBALS['eZRequestedModule'] = $module;
 $moduleResult = $module->run( $function_name, $uriParams, false, $userParams );
 
-return $moduleResult;
+eZDB::checkTransactionCounter();
+
+echo $moduleResult['content'];
+
+eZExecution::cleanExit();

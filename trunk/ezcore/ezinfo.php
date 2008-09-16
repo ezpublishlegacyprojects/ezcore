@@ -29,7 +29,7 @@ class ezcoreInfo
     static function info()
     {
         return array( 'Name'      => 'eZ Core',
-                      'Version'   => '0.91',
+                      'Version'   => '0.96',
                       'Copyright' => 'Copyright (C) 2008 eZ Systems AS',
                       'License'   => 'GNU General Public License v2.0',
                     );

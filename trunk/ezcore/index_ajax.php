@@ -71,40 +71,40 @@ function exitWithInternalError( $errorText )
     eZExecution::cleanExit();
 }
 
-function hasAccessToModule( $user, $module, $view = false, $policyCheckOmitList = false, $crc32AccessName = false )
+function hasAccessToLogin( $user, $crc32AccessName = false )
 {
-    if ( $policyCheckOmitList !== false )
+    $policyChecked = false;
+    $siteAccessResult = $user->hasAccessTo( 'user', 'login' );
+    if ( $crc32AccessName && $siteAccessResult[ 'accessWord' ] === 'limited' )
     {
-        if ( in_array( $module, $policyCheckOmitList) )
-            return true;
-        if ( $view !== false && in_array( $module . '/' . $view, $policyCheckOmitList) )
-            return true;
-    }
-    $siteAccessResult = $user->hasAccessTo( $module, $view );
-    if ( $crc32AccessName && $siteAccessResult[ 'accessWord' ] == 'limited' )
-    {
-        $policyChecked = false;
         foreach ( $siteAccessResult['policies'] as $policy )
         {
             if ( isset( $policy['SiteAccess'] ) )
             {
                 $policyChecked = true;
                 if ( in_array( $crc32AccessName, $policy['SiteAccess'] ) )
-                {
                     return true;
-                }
             }
         }
-        if ( !$policyChecked )
-        {
-            return true;
-        }
     }
-    else if ( $siteAccessResult[ 'accessWord' ] == 'yes' )
+    if ( $siteAccessResult[ 'accessWord' ] === 'yes' || !$policyChecked )
     {
         return true;
     }
     return false;
+}
+
+function hasAccessToView( eZUser $user, eZModule $module, $view = false, $policyCheckOmitList = false )
+{
+    if ( $policyCheckOmitList !== false )
+    {
+        $moduleName = $module->attribute('name');
+        if ( in_array( $moduleName, $policyCheckOmitList) )
+            return true;
+        if ( $view !== false && in_array( $moduleName . '/' . $view, $policyCheckOmitList) )
+            return true;
+    }
+    return $user->hasAccessToView( $module, $view, $params );
 }
 
 ignore_user_abort( true );
@@ -203,24 +203,13 @@ else
 }
 
 $currentUser = eZUser::currentUser();
-if ( !hasAccessToModule( $currentUser, 'user', 'login', false, eZSys::ezcrc32( $access[ 'name' ] ) ) )
+if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
 {
     exitWithInternalError( 'User does not have access to the current siteaccess.' );
     return;
 }
 
-$functionList = $module->attribute('available_functions');
-$hasAccess    = false;
-if ( isset( $functionList[$function_name] ) )
-{
-    $hasAccess = hasAccessToModule( $currentUser, $extensionModule, $function_name, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) );
-}
-else
-{
-    $hasAccess = hasAccessToModule( $currentUser, $extensionModule, false, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) );
-}
-
-if ( !$hasAccess )
+if ( !hasAccessToView( $currentUser, $module, $function_name, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
 {
     exitWithInternalError( "User does not have access to the $extensionModule/$function_name policy." );
     return;

@@ -13,7 +13,7 @@ ezcss generates the xhtml markup for you so you don't need to do anything but ca
 Packed files are cached in your var folder and not regenerated untill one of the input files are modified.
 So you'll need this rewrite rule to allow these files in apache (same as Online Editor 5.0):
 
-    RewriteRule ^/var/[^/]+/cache/(stylesheets|javascripts?)/.* - [L]
+    RewriteRule ^/var/[^/]+/cache/public/.* - [L]
 
 
 There is no overhead with these functions if you have the ezcss / ezcssfiles inside cache-block.
