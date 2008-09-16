@@ -27,15 +27,16 @@
 //
 
 /* 
- * Brief: eZCore contentobjectrate ajax call
- * Lets you call custom php code(s) from javascript to return json / xhtml / xml / text 
+ * Brief: eZCore module run
+ * A light redirector to be able to run other modules indirectly,
+ * when this module has rewrite rules to run under index_ajax.php
+ * Net effect is ~3 times faster execution.
  */
 
 $uriParams = $Params['Parameters'];
 $userParams = $Params['UserParameters'];
 
-
-// these functions are only set if called via index_ajax.php
+// These functions are only set if called via index_ajax.php
 if ( !function_exists( 'hasAccessToView' ) )
 {
     function exitWithInternalError( $errorText )
@@ -69,6 +70,7 @@ if ( !function_exists( 'hasAccessToView' ) )
 }// if ( !function_exists( 'hasAccessToModule' ) )
 
 
+// look for module and view info in uri parameters
 if ( !isset( $uriParams[1] ) )
 {
     exitWithInternalError( "Did not find module info in url." );
@@ -78,36 +80,38 @@ if ( !isset( $uriParams[1] ) )
 // set global module repositories in case this is called from index_ajax.php
 eZModule::setGlobalPathList( eZModule::activeModuleRepositories() );
 
-$extensionModule = array_shift( $uriParams );
-$module = eZModule::findModule( $extensionModule );
+// find module
+$moduleName = array_shift( $uriParams );
+$module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
 {
-    exitWithInternalError( "'$extensionModule' module does not exist, or is not a valid module." );
+    exitWithInternalError( "'$moduleName' module does not exist, or is not a valid module." );
     return;
 }
 
-$function_name = array_shift( $uriParams );
+// check existance of view
+$viewName = array_shift( $uriParams );
 $moduleViews = $module->attribute('views');
-if ( !isset( $moduleViews[ $function_name ] ) )
+if ( !isset( $moduleViews[ $viewName ] ) )
 {
-    exitWithInternalError( "'$function_name' view does not exist on the current module." );
+    exitWithInternalError( "'$viewName' view does not exist on the current module." );
     return;
 }
 
 // check access to view
 $ini          = eZINI::instance();
 $currentUser  = eZUser::currentUser();
-if ( !hasAccessToView( $currentUser, $module, $function_name, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
+if ( !hasAccessToView( $currentUser, $module, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
 {
-    exitWithInternalError( "User does not have access to the $extensionModule/$function_name policy." );
+    exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
     return;
 }
 
+// run module view
 $GLOBALS['eZRequestedModule'] = $module;
-$moduleResult = $module->run( $function_name, $uriParams, false, $userParams );
+$moduleResult = $module->run( $viewName, $uriParams, false, $userParams );
 
+// ouput result and end exit cleanly
 eZDB::checkTransactionCounter();
-
 echo $moduleResult['content'];
-
 eZExecution::cleanExit();
