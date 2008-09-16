@@ -42,9 +42,9 @@ if ( isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) )
     exit();
 }*/
 
+require 'autoload.php';
 require_once( 'lib/ezutils/classes/ezsession.php' );
 require_once( 'kernel/common/ezincludefunctions.php' );
-require 'autoload.php';
 
 function ezupdatedebugsettings()
 {
@@ -111,6 +111,7 @@ ignore_user_abort( true );
 ob_start();
 error_reporting ( E_ALL );
 
+// register fatal error & debug handler
 eZExecution::addFatalErrorHandler( 'eZFatalError' );
 eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
 
@@ -118,18 +119,17 @@ eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
 $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['SCRIPT_FILENAME'] );
 $_SERVER['PHP_SELF'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['PHP_SELF'] );
 
+// set timezone to avoid strict errors
 $ini = eZINI::instance();
-
 $timezone = $ini->variable( 'TimeZoneSettings', 'TimeZone' );
 if ( $timezone )
 {
     putenv( "TZ=$timezone" );
 }
 
+// init uri code
 $GLOBALS['eZGlobalRequestURI'] = eZSys::serverVariable( 'REQUEST_URI' );
-
 eZSys::init( 'index.php', $ini->variable( 'SiteAccessSettings', 'ForceVirtualHost' ) === 'true' );
-
 $uri = eZURI::instance( eZSys::requestURI() );
 $GLOBALS['eZRequestedURI'] = $uri;
 
@@ -138,6 +138,7 @@ require_once 'pre_check.php';
 // Check for extension
 eZExtension::activateExtensions( 'default' );
 
+// load siteaccess
 require_once 'access.php';
 $access = accessType( $uri,
                       eZSys::hostname(),
@@ -148,13 +149,56 @@ $access = changeAccess( $access );
 // Check for new extension loaded by siteaccess ( disabled for performance reasons )
 //eZExtension::activateExtensions( 'access' );
 
-$extensionModule = $uri->element();
-if ( $extensionModule === '' || strpos( $extensionModule, '.php' ) !== false  )
+// check module name
+$moduleName = $uri->element();
+if ( $moduleName === '' || strpos( $moduleName, '.php' ) !== false  )
 {
     exitWithInternalError( 'Did not find module info in url.' );
     return;  
 }
 
+// chack db connection
+$db = eZDB::instance();
+if ( $db->isConnected() )
+{
+    eZSessionStart();
+}
+else
+{
+    exitWithInternalError( 'Could not connect to database.' );
+}
+
+
+// Initialize with locale settings
+$locale       = eZLocale::instance();
+$languageCode = $locale->httpLocaleCode();
+$httpCharset  = eZTextCodec::httpCharset();
+$phpLocale    = trim( $ini->variable( 'RegionalSettings', 'SystemLocale' ) );
+if ( $phpLocale !== '' )
+{
+    setlocale( LC_ALL, explode( ',', $phpLocale ) );
+}
+
+// send header information
+$headerList = array( 'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+                     'Last-Modified' => gmdate( 'D, d M Y H:i:s' ) . ' GMT',
+                     'Cache-Control' => 'no-cache, must-revalidate',
+                     'Pragma' => 'no-cache',
+                     'X-Powered-By' => 'eZ Publish',
+                     'Content-Type' => 'text/html; charset=' . $httpCharset,
+                     'Served-by' => $_SERVER["SERVER_NAME"],
+                     'Content-language' => $languageCode );
+$headerOverrideArray = eZHTTPHeader::headerOverrideArray( $uri );
+$headerList = array_merge( $headerList, $headerOverrideArray );
+foreach( $headerList as $key => $value )
+{
+    header( $key . ': ' . $value );
+}
+
+// set default section id
+eZSection::initGlobalID();
+
+// get and set ajax module repositories
 $moduleINI = eZINI::instance( 'module.ini' );
 $globalModuleRepositories = array( );
 if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
@@ -164,44 +208,35 @@ if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
         $globalModuleRepositories[] = 'extension/' . $repo . '/modules';
     }
 }
-
 eZModule::setGlobalPathList( $globalModuleRepositories );
 
-$module = eZModule::findModule( $extensionModule );
+// find module
+$module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
 {
-    exitWithInternalError( "'$extensionModule' module does not exist, or is not a valid ajax module." );
+    exitWithInternalError( "'$moduleName' module does not exist, or is not a valid ajax module." );
     return;
 }
 
+// find module view
 $uri->increase();
-$function_name = $uri->element();
-$uri->increase();
-
-if ( !$function_name )
+$viewName = $uri->element();
+if ( !$viewName )
 {
     exitWithInternalError( 'Did not find view info in url.' );
     return;
 }
 
+// verify view name
+$uri->increase();
 $moduleViews = $module->attribute('views');
-if ( !isset( $moduleViews[$function_name] ) )
+if ( !isset( $moduleViews[$viewName] ) )
 {
-    exitWithInternalError( "'$function_name' view does not exist on the current module." );
+    exitWithInternalError( "'$viewName' view does not exist on the current module." );
     return;
 }
 
-$db = eZDB::instance();
-if ( $db->isConnected() )
-{
-    eZSessionStart();
-}
-else
-{
-    exitWithInternalError( 'Could not connect to database.' );
-    return;
-}
-
+// check user/login access
 $currentUser = eZUser::currentUser();
 if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
 {
@@ -209,29 +244,29 @@ if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
     return;
 }
 
-if ( !hasAccessToView( $currentUser, $module, $function_name, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
+// check access to view
+if ( !hasAccessToView( $currentUser, $module, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
 {
-    exitWithInternalError( "User does not have access to the $extensionModule/$function_name policy." );
+    exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
     return;
 }
 
+// run module
 $GLOBALS['eZRequestedModule'] = $module;
-$moduleResult = $module->run( $function_name, $uri->elements( false ), false, $uri->userParameters() );
+$moduleResult = $module->run( $viewName, $uri->elements( false ), false, $uri->userParameters() );
 
-
+// run ouput filter
 $classname = eZINI::instance()->variable( "OutputSettings", "OutputFilterName" );
 if( class_exists( $classname ) )
 {
     $moduleResult['content'] = call_user_func( array ( $classname, 'filter' ), $moduleResult['content'] );
 }
 
+// ouput content
 $out = ob_get_clean();
 echo trim( $out );
-
 eZDB::checkTransactionCounter();
-
 echo $moduleResult['content'];
-
 eZExecution::cleanExit();
 
 ?>
