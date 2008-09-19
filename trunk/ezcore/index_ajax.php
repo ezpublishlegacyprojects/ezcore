@@ -26,9 +26,9 @@
 
 // Set a default time zone if none is given. The time zone can be overriden
 // in config.php or php.ini.
-if ( !ini_get( "date.timezone" ) )
+if ( !ini_get( 'date.timezone' ) )
 {
-    date_default_timezone_set( "UTC" );
+    date_default_timezone_set( 'UTC' );
 }
 
 /*define( 'MAX_AGE', 86400 );
@@ -67,6 +67,7 @@ function exitWithInternalError( $errorText )
     else if ( $contentType === 'json' )
         header('Content-Type: text/javascript; charset=utf-8');
 
+    eZDB::checkTransactionCounter();
     echo eZAjaxContent::autoEncode( array( 'error_text' => $errorText, 'content' => '' ), $contentType );
     eZExecution::cleanExit();
 }
@@ -154,7 +155,6 @@ $moduleName = $uri->element();
 if ( $moduleName === '' || strpos( $moduleName, '.php' ) !== false  )
 {
     exitWithInternalError( 'Did not find module info in url.' );
-    return;  
 }
 
 // chack db connection
@@ -186,7 +186,7 @@ $headerList = array( 'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
                      'Pragma' => 'no-cache',
                      'X-Powered-By' => 'eZ Publish',
                      'Content-Type' => 'text/html; charset=' . $httpCharset,
-                     'Served-by' => $_SERVER["SERVER_NAME"],
+                     'Served-by' => $_SERVER['SERVER_NAME'],
                      'Content-language' => $languageCode );
 $headerOverrideArray = eZHTTPHeader::headerOverrideArray( $uri );
 $headerList = array_merge( $headerList, $headerOverrideArray );
@@ -215,7 +215,6 @@ $module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
 {
     exitWithInternalError( "'$moduleName' module does not exist, or is not a valid ajax module." );
-    return;
 }
 
 // find module view
@@ -224,7 +223,6 @@ $viewName = $uri->element();
 if ( !$viewName )
 {
     exitWithInternalError( 'Did not find view info in url.' );
-    return;
 }
 
 // verify view name
@@ -233,7 +231,6 @@ $moduleViews = $module->attribute('views');
 if ( !isset( $moduleViews[$viewName] ) )
 {
     exitWithInternalError( "'$viewName' view does not exist on the current module." );
-    return;
 }
 
 // check user/login access
@@ -241,14 +238,12 @@ $currentUser = eZUser::currentUser();
 if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
 {
     exitWithInternalError( 'User does not have access to the current siteaccess.' );
-    return;
 }
 
 // check access to view
 if ( !hasAccessToView( $currentUser, $module, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
 {
     exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
-    return;
 }
 
 // run module
@@ -256,10 +251,13 @@ $GLOBALS['eZRequestedModule'] = $module;
 $moduleResult = $module->run( $viewName, $uri->elements( false ), false, $uri->userParameters() );
 
 // run ouput filter
-$classname = eZINI::instance()->variable( "OutputSettings", "OutputFilterName" );
-if( class_exists( $classname ) )
+if ( $ini->hasVariable( 'OutputSettings', 'OutputFilterName' ) )
 {
-    $moduleResult['content'] = call_user_func( array ( $classname, 'filter' ), $moduleResult['content'] );
+    $classname = $ini->variable( 'OutputSettings', 'OutputFilterName' );
+    if( class_exists( $classname ) )
+    {
+        $moduleResult['content'] = call_user_func( array ( $classname, 'filter' ), $moduleResult['content'] );
+    }
 }
 
 // ouput content
