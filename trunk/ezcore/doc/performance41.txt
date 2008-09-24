@@ -1,0 +1,85 @@
+General Performance tips for eZ Publish 4.1
+
+
+  eZ Publish 4.1 improves performance in a couple of aspects 
+  and ads a couple of settings to be able to tweak performance
+  without breaking BC.
+  
+  
+  
+1. eZIni check modified time tweak
+  By default, eZIni will check modified time on all ini files on each
+  request to determine if cache is valid or not. This is not a issue
+  on Linux with ext2/3 or similar fast filesytem, but on windows, mac
+  and other systems with slow stat calls (for instance nfs) this is a
+  issue. Basically you'll get 40-60% overall better performance
+  with this tweak on Windows, but only close to 5% on Linux. 
+  
+  So to disable this:
+  1. Add or modify config.php in the root of your eZ Publish install.
+  2a. Add the following php code in the file:
+      define( 'EZP_INI_FILEMTIME_CHECK', false );
+  2b. Alternatively to make the system still check for modifications
+      to some specific ini file, in this case site.ini:
+      define( 'EZP_INI_FILEMTIME_CHECK', 'site.ini' );
+
+
+2. Translation check modified time tweak
+  Just like ezini, the translation system checks modified time on
+  each used translation file on each request. This tweak dosn't
+  give the same improvement as the ezini tweak does. Simply
+  because there is a lot more ini files then ts files on a
+  typical install.
+  
+  To disable set this setting in site.ini:
+  [RegionalSettings]
+  TranslationCheckMTime=enabled
+  
+  
+3. Skip url translation sql call on system urls
+   By default the system will check for url translations
+   on each request unless the url is empty (index page).
+   So basically you can redirect a /content/view/full/69
+   url to /content/view/full/2 if you want or something similar.
+   If you don't use this feature, you might want to spare your
+   database from these calls, here is how to disable it in site.ini:
+
+   [URLTranslator]
+   TranslatableSystemUrls=disabled
+
+4. Avoid cache_ttl=0
+   (This is not in svn yet as of 24.09.08)
+   To read more on the issue:
+   http://issues.ez.no/IssueView.php?Id=13274&activeItem=3
+   Basically you can get into file lock issues if you use cache_ttl=0 on
+   a slow template.
+   
+   To let the view cache system know about cache_ttl=0 in advance, disable it pr
+   node in site.ini:
+   [ContentSettings]
+   ViewCacheSettings[69]=disabled
+   
+   Note: It is not really recommended to disable view cache for performance reasons,
+   so you should rather set it cache_ttl to a low number, to make sure the data is more
+   or less current and page is cached in case of increased traffic on that page.
+   So at least set it to ~60 (1 min), so it's not cached for no good reason.
+   
+   But: You should ideally identify why you need cache_ttl to clear cache frequently,
+   by investigating how the view cache system works to better take advantage of it:
+   http://ez.no/doc/ez_publish/technical_manual/4_0/features/view_caching/clearing_the_view_cache
+
+   If it is because you manually fetch unrelated nodes in the node template, you should
+   think about using relations instead, so:
+   1. it's not hardcoded, letting editor change the relation
+   2. let the view cache system take care of expiring cache when relations change. 
+   
+   If you however for some reason fetch the current user in the code and use his name
+   or id in some way, you should try to look at avoiding that.
+   Alternatively you can use a new setting to set view cache to work pr user:
+   (introduced in the issue/setting mentioned above)
+   
+   [ContentSettings]
+   ViewCacheSettings[69]=pr_user
+
+   Note: as mentioned already, this ('ViewCacheSettings') is not in svn yet, and
+   might not end up in 4.1.

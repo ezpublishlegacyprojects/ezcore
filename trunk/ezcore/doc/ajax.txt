@@ -8,6 +8,10 @@ Index:
 * ezajaxcontent.php
 
 
+Note: take a look in performance41.txt for how to improve performance for
+      (your ajax calls in) eZ Publish 4.1.
+
+
 index_ajax.php:
 
     A light ajax index.php for your ajax modules, checks access to siteaccess
@@ -21,8 +25,9 @@ index_ajax.php:
     
     Install:
     1. copy file from root of extension to root of eZ Publish installation.
-    2. Add this to your apache rewrite rules:
-       RewriteRule ezcore/.* /index_ajax.php [L]
+    2. Add this to your apache rewrite rules (for the views you need):
+       RewriteRule ezcore/call/ /index_ajax.php [L]
+       RewriteRule ezcore/run/ /index_ajax.php [L]
        
     Using on your own modules:
     0. This example uses myextension and mymodule as extension and module name
@@ -30,7 +35,17 @@ index_ajax.php:
        [ModuleSettings]
        ExtensionAjaxRepositories[]=myextension
     2. Add Rewrite rule
-       RewriteRule mymodule/.* /index_ajax.php [L]
+       RewriteRule mymodule/myview/ /index_ajax.php [L]
+
+    Alternative approach to above approach for using your own modules:
+    1. simply use ezcore/run to execute your own view
+       so you don't need to add rewrite rules for each new ajax view
+    2. Optional: Specify ezcore/run in the
+       [SiteAccessSettings]AnonymousAccessList[]
+       and
+       [RoleSettings]PolicyOmitList[]
+       To keep overhead of the ezcore/run/ call close to zero.
+    3. example url: /ezcore/run/content/view/full/2
 
 
 ezcore/call:
