@@ -72,7 +72,19 @@ function exitWithInternalError( $errorText )
     eZExecution::cleanExit();
 }
 
-function hasAccessToLogin( $user, $crc32AccessName = false )
+function hasAccessToBySetting( $moduleName, $view = false, $policyAccessList = false )
+{
+    if ( $policyAccessList !== false )
+    {
+        if ( in_array( $moduleName, $policyAccessList) )
+            return true;
+        if ( $view && in_array( $moduleName . '/' . $view, $policyAccessList) )
+            return true;
+    }
+    return false;
+}
+
+function hasAccessToLogin( eZUser $user, $crc32AccessName = false )
 {
     $policyChecked = false;
     $siteAccessResult = $user->hasAccessTo( 'user', 'login' );
@@ -93,19 +105,6 @@ function hasAccessToLogin( $user, $crc32AccessName = false )
         return true;
     }
     return false;
-}
-
-function hasAccessToView( eZUser $user, eZModule $module, $view = false, $policyCheckOmitList = false )
-{
-    if ( $policyCheckOmitList !== false )
-    {
-        $moduleName = $module->attribute('name');
-        if ( in_array( $moduleName, $policyCheckOmitList) )
-            return true;
-        if ( $view !== false && in_array( $moduleName . '/' . $view, $policyCheckOmitList) )
-            return true;
-    }
-    return $user->hasAccessToView( $module, $view, $params );
 }
 
 ignore_user_abort( true );
@@ -218,15 +217,20 @@ if ( !$module instanceof eZModule )
 }
 
 // find module view
-$uri->increase();
-$viewName = $uri->element();
+$viewName = $uri->element( 1 );
 if ( !$viewName )
 {
     exitWithInternalError( 'Did not find view info in url.' );
 }
 
+// Check if module / view is disabled
+$moduleCheck = accessAllowed( $uri );
+if ( !$moduleCheck['result'] )
+{
+    exitWithInternalError( '$moduleName/$viewName is disabled.' );
+}
+
 // verify view name
-$uri->increase();
 $moduleViews = $module->attribute('views');
 if ( !isset( $moduleViews[$viewName] ) )
 {
@@ -235,18 +239,22 @@ if ( !isset( $moduleViews[$viewName] ) )
 
 // check user/login access
 $currentUser = eZUser::currentUser();
-if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
+if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'SiteAccessSettings', 'AnonymousAccessList' ) )
+  && !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
 {
     exitWithInternalError( 'User does not have access to the current siteaccess.' );
 }
 
 // check access to view
-if ( !hasAccessToView( $currentUser, $module, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
+if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) )
+  && !$currentUser->hasAccessToView( $module, $viewName, $params ) )
 {
     exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
 }
 
 // run module
+$uri->increase();
+$uri->increase();
 $GLOBALS['eZRequestedModule'] = $module;
 $moduleResult = $module->run( $viewName, $uri->elements( false ), false, $uri->userParameters() );
 

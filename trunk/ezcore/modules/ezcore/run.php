@@ -37,7 +37,7 @@ $uriParams = $Params['Parameters'];
 $userParams = $Params['UserParameters'];
 
 // These functions are only set if called via index_ajax.php
-if ( !function_exists( 'hasAccessToView' ) )
+if ( !function_exists( 'hasAccessToBySetting' ) )
 {
     function exitWithInternalError( $errorText )
     {
@@ -54,18 +54,17 @@ if ( !function_exists( 'hasAccessToView' ) )
         echo eZAjaxContent::autoEncode( array( 'error_text' => $errorText, 'content' => '' ), $contentType );
         eZExecution::cleanExit();
     }
-    
-    function hasAccessToView( eZUser $user, eZModule $module, $view = false, $policyCheckOmitList = false )
+
+    function hasAccessToBySetting( $moduleName, $view = false, $policyAccessList = false )
     {
-        if ( $policyCheckOmitList !== false )
+        if ( $policyAccessList !== false )
         {
-            $moduleName = $module->attribute('name');
-            if ( in_array( $moduleName, $policyCheckOmitList) )
+            if ( in_array( $moduleName, $policyAccessList) )
                 return true;
-            if ( $view !== false && in_array( $moduleName . '/' . $view, $policyCheckOmitList) )
+            if ( $view && in_array( $moduleName . '/' . $view, $policyAccessList) )
                 return true;
         }
-        return $user->hasAccessToView( $module, $view, $params );
+        return false;
     }
 }// if ( !function_exists( 'hasAccessToModule' ) )
 
@@ -81,7 +80,8 @@ if ( !isset( $uriParams[1] ) )
 eZModule::setGlobalPathList( eZModule::activeModuleRepositories() );
 
 // find module
-$moduleName = array_shift( $uriParams );
+$uri = eZURI::instance();
+$moduleName = $uri->element();
 $module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
 {
@@ -90,7 +90,7 @@ if ( !$module instanceof eZModule )
 }
 
 // check existance of view
-$viewName = array_shift( $uriParams );
+$viewName = $uri->element( 1 );
 $moduleViews = $module->attribute('views');
 if ( !isset( $moduleViews[ $viewName ] ) )
 {
@@ -98,18 +98,29 @@ if ( !isset( $moduleViews[ $viewName ] ) )
     return;
 }
 
+// Check if module / view is disabled
+$moduleCheck = accessAllowed( $uri );
+if ( !$moduleCheck['result'] )
+{
+    exitWithInternalError( '$moduleName/$viewName is disabled.' );
+}
+
+
 // check access to view
-$ini          = eZINI::instance();
-$currentUser  = eZUser::currentUser();
-if ( !hasAccessToView( $currentUser, $module, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
+$ini         = eZINI::instance();
+$currentUser = eZUser::currentUser();
+if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) )
+  && !$currentUser->hasAccessToView( $module, $viewName, $params ) )
 {
     exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
     return;
 }
 
 // run module view
+$uri->increase();
+$uri->increase();
 $GLOBALS['eZRequestedModule'] = $module;
-$moduleResult = $module->run( $viewName, $uriParams, false, $userParams );
+$moduleResult = $module->run( $viewName, $uri->elements( false ), false, $uri->userParameters() );
 
 // ouput result and end exit cleanly
 eZDB::checkTransactionCounter();
