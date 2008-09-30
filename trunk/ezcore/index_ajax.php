@@ -209,6 +209,13 @@ if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
 }
 eZModule::setGlobalPathList( $globalModuleRepositories );
 
+$siteBasics = array();
+$check = eZCheckUser( $siteBasics, $uri );
+if ( $check !== null )
+{
+    exitWithInternalError( "'eZCheckUser' returned something else then null: " . var_export( $check, true ) );
+}
+
 // find module
 $module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
@@ -237,19 +244,21 @@ if ( !isset( $moduleViews[$viewName] ) )
     exitWithInternalError( "'$viewName' view does not exist on the current module." );
 }
 
-// check user/login access
-$currentUser = eZUser::currentUser();
-if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'SiteAccessSettings', 'AnonymousAccessList' ) )
-  && !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
+// check access
+if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) ) )
 {
-    exitWithInternalError( 'User does not have access to the current siteaccess.' );
-}
-
-// check access to view
-if ( !hasAccessToBySetting( $moduleName, $viewName, $ini->variable( 'RoleSettings', 'PolicyOmitList' ) )
-  && !$currentUser->hasAccessToView( $module, $viewName, $params ) )
-{
-    exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
+    // check user/login access
+    $currentUser = eZUser::currentUser();
+    if ( !hasAccessToLogin( $currentUser, eZSys::ezcrc32( $access[ 'name' ] ) ) )
+    {
+        exitWithInternalError( 'User does not have access to the current siteaccess.' );
+    }
+    
+    // check access to view
+    if ( !$currentUser->hasAccessToView( $module, $viewName, $params ) )
+    {
+        exitWithInternalError( "User does not have access to the $moduleName/$viewName policy." );
+    }
 }
 
 // run module
