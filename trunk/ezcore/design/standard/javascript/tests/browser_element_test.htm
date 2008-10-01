@@ -316,6 +316,22 @@
         debug( 'test_case_18', "ez.$$('#test_case_18 *:nth-child(2n+1)').map(function(i){ return i.el.nodeName }).join(',')", 'A,SPAN,SPAN,A', test_case_18.map(function(i){ return i.el.nodeName }).join(',') );
         </script>
     </div>
+
+    <div class="test_case">
+        <table>
+            <tr>
+                <td id="test_case_19"><br mce_bogus="1"/></td>
+                <th><br mce_bogus="1"/></th>
+                <td><br mce_bogus="1"/></td>
+            </tr>
+        </table>
+        <script type="text/javascript" language="JavaScript">
+        var test_case_19 = ez.$$('> *', ez.$('test_case_19').el.parentNode );
+        </script>
+        <script type="text/javascript" language="JavaScript">
+        debug( 'test_case_19', "ez.$$('#test_case_19 > *').map(function(i){ return i.el.nodeName }).join(',')", 'TD,TH,TD', test_case_19.map(function(i){ return i.el.nodeName }).join(',') );
+        </script>
+    </div>
 	
 <h3>.getStyle:</h3>
 <p>Note: Test 22 are known to fail in Safari 2.0.x</p>
