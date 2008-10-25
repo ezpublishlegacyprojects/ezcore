@@ -71,7 +71,16 @@ ezcore/call:
             // errorCode is 0 if everything went ok
             alert( content + errorCode + errorText );
         }
-      
+    
+    How to use your own flavour of a javascript library:
+      1. Since all js libraryes are different, you'll need to implement the js -> ezcore/call glue your self.
+         But it is really simple if you know your js shit :P
+         So look in classes/ezcoreserverfunctions.php in the server function for how it is done.
+         You'll notice that the only reason why this is generated in php code is to know the url for the root
+         of the current eZ Publish install, so you can implement this as a template instead if you want.
+
+      2. Now simply follow the guid above for the ezcore library, but change the calls to your own functions.
+         1st step could be something like {ezscript(array('yui.js', 'yui::server'))} if your using yui..
 
 ezcoreservercall.php:
 
