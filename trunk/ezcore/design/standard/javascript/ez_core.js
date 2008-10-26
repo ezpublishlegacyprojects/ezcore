@@ -712,7 +712,10 @@ ez.element.eZextensions.prototype = {
         if ( ty === undefined || !el.name ) return '';
         if ( delimiter === undefined ) delimiter = '&';
         if (ty === 'radio' || ty === 'checkbox')
-            val.push( el.checked ? el.value : '' );
+        {
+            if ( !el.checked ) return '';
+            val.push( el.value );
+        }
         else if (ty === 'select-one')
             val.push( ( el.selectedIndex != -1 ) ? el.options[el.selectedIndex].value : '' );
         else if (ty === 'select-multiple')
