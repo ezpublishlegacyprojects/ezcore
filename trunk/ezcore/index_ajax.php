@@ -210,6 +210,8 @@ if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
 eZModule::setGlobalPathList( $globalModuleRepositories );
 
 $siteBasics = array();
+$userObjectRequired = false;
+$siteBasics['user-object-required'] =& $userObjectRequired;
 $check = eZCheckUser( $siteBasics, $uri );
 if ( $check !== null )
 {
