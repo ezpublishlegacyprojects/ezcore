@@ -67,10 +67,10 @@ class eZPacker
     static protected $cacheDir = null;
     
     // static :: Builds the xhtml tag(s) for scripts
-    static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel = 2 )
+    static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel = 2, $wwwInCacheHash = false )
     {
         $ret = '';
-        $packedFiles = eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel );
+        $packedFiles = eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel, $wwwInCacheHash );
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a js file or js content?
@@ -83,10 +83,10 @@ class eZPacker
     }
     
     // static :: Builds the xhtml tag(s) for stylesheets
-    static function buildStylesheetTag( $cssFiles, $media, $type, $rel, $packLevel = 3 )
+    static function buildStylesheetTag( $cssFiles, $media, $type, $rel, $packLevel = 3, $wwwInCacheHash = true )
     {
         $ret = '';
-        $packedFiles = eZPacker::packFiles( $cssFiles, 'stylesheets/', '_' . $media . '.css', $packLevel );
+        $packedFiles = eZPacker::packFiles( $cssFiles, 'stylesheets/', '_' . $media . '.css', $packLevel, $wwwInCacheHash );
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a css file or css content?
@@ -100,15 +100,15 @@ class eZPacker
     
     
     // static :: Builds a array of script files
-    static function buildJavascriptFiles( $scriptFiles, $packLevel = 2 )
+    static function buildJavascriptFiles( $scriptFiles, $packLevel = 2, $wwwInCacheHash = false )
     {
-        return eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel );
+        return eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel, $wwwInCacheHash );
     }
     
     // static :: Builds a array of stylesheet files
-    static function buildStylesheetFiles( $cssFiles, $packLevel = 3 )
+    static function buildStylesheetFiles( $cssFiles, $packLevel = 3, $wwwInCacheHash = true )
     {
-        return eZPacker::packFiles( $cssFiles, 'stylesheets/', '_all.css', $packLevel );
+        return eZPacker::packFiles( $cssFiles, 'stylesheets/', '_all.css', $packLevel, $wwwInCacheHash );
     }
 
     // static :: sets the system directories
@@ -130,7 +130,7 @@ class eZPacker
      of the valid files in $file_array and the packlevel. 
      The whole argument is used instead of file path on js/ css generators in the cache hash.
      */
-    static function packFiles( $fileArray, $subPath = '', $fileExtension = '.js', $packLevel = 2 )
+    static function packFiles( $fileArray, $subPath = '', $fileExtension = '.js', $packLevel = 2, $wwwInCacheHash = false )
     {
         if ( !$fileArray )
         {
@@ -153,6 +153,11 @@ class eZPacker
             'cache_dir' => self::$cacheDir,
             'www_dir' => self::$wwwDir,
         );
+
+        if ( $wwwInCacheHash )
+        {
+        	$cacheName = self::$wwwDir;
+        }
 
         while( count( $fileArray ) > 0 )
         {
@@ -223,7 +228,7 @@ class eZPacker
                 $file = htmlspecialchars( self::$wwwDir . $match['path'] );
             }
 
-            // get file time and abort if it return false
+            // get file time and continue if it return false
             $file      = str_replace( '//' . self::$wwwDir, '', '//' . $file );
             $fileTime = @filemtime( $file );
 
