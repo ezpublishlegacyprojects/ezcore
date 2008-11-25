@@ -91,6 +91,12 @@ else if ( $contentObject->checkAccess( 'edit' ) == '1' )
                 $objectDataMap[$attributeIdentifier]->store();
                 echo 'Stored int/boolean value: ' . $attributeValue;
                 break;
+            case 'ezimage':
+                $content = $newObjectDataMap[$key]->attribute('content');
+                $content->setAttribute( 'alternative_text', trim( $http->postVariable( $base ) ) );
+                $content->store();
+                echo 'Stored ezimage alternative_text text value: ' . $attributeValue;
+                break;
             default:
                 $error = 'DataType not supported: '. $objectDataMap[$attributeIdentifier]->attribute( 'data_type_string' );
                 break;
