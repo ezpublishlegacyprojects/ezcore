@@ -1,7 +1,7 @@
 eZContentRating
 ---------------
-	
-	
+
+
 A module + 2 template operator to allow rating content.
 
 The custom database table needed can be found in sql/ezrating.sql

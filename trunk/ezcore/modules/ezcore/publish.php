@@ -27,10 +27,10 @@
 //
 // ## BEGIN ABOUT TEXT, SPECS AND DESCRIPTION  ##
 //
-// MODULE:		eZCore
-// VIEW:		publish
-// PARAMS:		'ParentNodeID', 'ClassIdentifier', 'LanguageCode'
-// OUTPUT:		xhtml
+// MODULE:      eZCore
+// VIEW:        publish
+// PARAMS:      'ParentNodeID', 'ClassIdentifier', 'LanguageCode'
+// OUTPUT:      xhtml
 // DESCRIPTION: Script for generating content directly
 //              based on post input
 //              Currently only ezstring and eztext

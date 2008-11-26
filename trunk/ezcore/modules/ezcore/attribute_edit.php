@@ -27,10 +27,10 @@
 //
 // ## BEGIN ABOUT TEXT, SPECS AND DESCRIPTION  ##
 //
-// MODULE:		ezcore
-// VIEW:		attribute_edit
-// PARAMS:		'ObjectID', 'AttributeIdentifier', 'AttributeValue'
-// OUTPUT:		text
+// MODULE:      ezcore
+// VIEW:        attribute_edit
+// PARAMS:      'ObjectID', 'AttributeIdentifier', 'AttributeValue'
+// OUTPUT:      text
 // DESCRIPTION: Script for editing attribute content directly
 //              Only owner has access for security reasons
 //

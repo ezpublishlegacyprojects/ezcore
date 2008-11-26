@@ -27,10 +27,10 @@
 //
 // ## BEGIN ABOUT TEXT, SPECS AND DESCRIPTION  ##
 //
-// MODULE:		ezcore
-// VIEW:		remove_assignment
-// PARAMS:		'ParentNodeId'
-// OUTPUT:		text
+// MODULE:      ezcore
+// VIEW:        remove_assignment
+// PARAMS:      'ParentNodeId'
+// OUTPUT:      text
 // DESCRIPTION: Remove node assignment for several nodes
 //              Either by node ids or by object id and parent node
 //

@@ -156,7 +156,7 @@ class eZPacker
 
         if ( $wwwInCacheHash )
         {
-        	$cacheName = self::$wwwDir;
+            $cacheName = self::$wwwDir;
         }
 
         while( count( $fileArray ) > 0 )

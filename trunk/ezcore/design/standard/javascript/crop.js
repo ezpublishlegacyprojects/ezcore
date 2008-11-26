@@ -66,14 +66,14 @@ ez.object.extend( ez.element.eZextensions.prototype, {
         {
             var tempHeight = e.clientY + ez.element.getScroll('top') - this.cropPositionTop;
             var tempWidth = e.clientX + ez.element.getScroll('left') - this.cropPositionLeft, ratio = this.settings.cropAspectRatio;
-			if ( ratio )
-			{
+            if ( ratio )
+            {
                 var tw = Math.round( ratio * tempHeight );
-				if ( tw < tempWidth )
-				    tempWidth = tw;
+                if ( tw < tempWidth )
+                    tempWidth = tw;
                 else if ( tw > tempWidth )
-				    tempHeight = Math.round( tempWidth / ratio );
-			}
+                    tempHeight = Math.round( tempWidth / ratio );
+            }
             var o = {
                 left: ( tempWidth > -1 ) ? 0 : 'auto',
                 top: ( tempHeight > -1 ) ? 0 : 'auto',
