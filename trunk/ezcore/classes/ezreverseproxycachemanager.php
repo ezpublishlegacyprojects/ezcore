@@ -64,15 +64,20 @@ class eZReverseProxyCacheManager
                          $errorNumber,
                          $errorString,
                          $timeout );
+        if ( !$fp )
+        {
+            eZDebug::writeError( 'Error connecting to: ' . $server .':'.$port , 'eZReverseProxyCacheManager::purgeURL' );
+            return null;
+        }
 
         $HTTPRequest = "PURGE " . $path . " HTTP/1.0\r\n" .
                        "Accept: */*\r\n\r\n";
 
         if ( !fputs( $fp, $HTTPRequest, strlen( $HTTPRequest ) ) )
         {
-            // print("Error purging cache" );
-            return  null;
-        }        
+            eZDebug::writeError( 'Error purging path: ' . $path , 'eZReverseProxyCacheManager::purgeURL' );
+            return null;
+        }
 
         // fetch the response
         while ( $data = fread( $fp, 32768 ) )
