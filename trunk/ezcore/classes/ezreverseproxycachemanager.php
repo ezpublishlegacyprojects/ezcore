@@ -49,7 +49,7 @@ class eZReverseProxyCacheManager
     static function purgeURL( $path )
     {
 
-        $ini = eZINI::instance( 'reverse_proxy.ini.ini' );
+        $ini = eZINI::instance( 'reverse_proxy.ini' );
 
         $server = $ini->variable( 'ReverseProxy', 'Server' );
         $port = $ini->variable( 'ReverseProxy', 'Port' );
