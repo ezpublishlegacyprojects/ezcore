@@ -70,14 +70,16 @@ class eZPacker
     static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel = 2, $wwwInCacheHash = false )
     {
         $ret = '';
+        if ( !$lang ) $lang = '';
+        else $lang = ' language="' . $lang . '"';
         $packedFiles = eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel, $wwwInCacheHash );
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a js file or js content?
             if ( strlen( $packedFile ) > 3 && strripos( $packedFile, '.js' ) === ( strlen( $packedFile ) -3 ) )
-                $ret .=  $packedFile ? "<script language=\"$lang\" type=\"$type\" src=\"$packedFile\"></script>\r\n" : '';
+                $ret .=  $packedFile ? "<script$lang type=\"$type\" src=\"$packedFile\"></script>\r\n" : '';
             else
-                $ret .=  $packedFile ? "<script language=\"$lang\" type=\"$type\">\r\n$packedFile\r\n</script>\r\n" : '';
+                $ret .=  $packedFile ? "<script$lang type=\"$type\">\r\n$packedFile\r\n</script>\r\n" : '';
         }
         return $ret;
     }
