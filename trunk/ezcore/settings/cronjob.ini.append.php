@@ -4,7 +4,7 @@
 [CronjobSettings]
 ExtensionDirectories[]=ezcore
 
-[CronjobSettings-reverse_proxy_purge]
+[CronjobPart-reverse_proxy_purge]
 Scripts[]
 Scripts[]=reverse_proxy_purge.php
 
