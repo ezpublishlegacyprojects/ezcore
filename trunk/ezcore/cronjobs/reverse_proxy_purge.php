@@ -83,7 +83,7 @@ for ($i = 1; $i <= $iterations; $i++)
 
                 if ( !$isQuiet && $response === null )
                 {
-                    $cli->output( 'Could not put content, is reverse proxy running and is reverse_proxy.ini configured correctly?' );
+                    $cli->output( 'Could not purge url: ' . $source );
                 }
                 else if ( !$isQuiet && $response !== null )
                 {
