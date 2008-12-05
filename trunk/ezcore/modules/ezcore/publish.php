@@ -39,14 +39,14 @@
 //
 
 include_once( 'kernel/common/template.php' );
-include_once( 'kernel/classes/ezsection.php' );
-include_once( 'kernel/classes/ezcontentclass.php' );
-include_once( 'kernel/classes/ezcontentlanguage.php' );
-include_once( 'kernel/classes/eznodeviewfunctions.php' );
-include_once( 'kernel/classes/ezcontentcachemanager.php' );
-include_once( 'kernel/classes/ezcontentobjecttreenode.php' );
-include_once( 'kernel/classes/datatypes/ezuser/ezuser.php' );
-include_once( 'lib/ezutils/classes/ezoperationhandler.php' );
+//include_once( 'kernel/classes/ezsection.php' );
+//include_once( 'kernel/classes/ezcontentclass.php' );
+//include_once( 'kernel/classes/ezcontentlanguage.php' );
+//include_once( 'kernel/classes/eznodeviewfunctions.php' );
+//include_once( 'kernel/classes/ezcontentcachemanager.php' );
+//include_once( 'kernel/classes/ezcontentobjecttreenode.php' );
+//include_once( 'kernel/classes/datatypes/ezuser/ezuser.php' );
+//include_once( 'lib/ezutils/classes/ezoperationhandler.php' );
 
 
 function generateNodeViewLite($node, $object, $parentClass = false, $languageCode = false, $viewMode = 'line' )

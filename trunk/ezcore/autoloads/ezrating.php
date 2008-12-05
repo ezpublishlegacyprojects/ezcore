@@ -32,8 +32,6 @@
   Template operator for getting user rating of content
 */
 
-include_once( 'lib/ezdb/classes/ezdb.php' );
-include_once( 'kernel/classes/ezcontentobject.php' );
 
 class eZContentRating
 {

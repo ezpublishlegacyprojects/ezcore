@@ -32,8 +32,6 @@
   Perfoms calls to custom functions or templates depending on arguments and ini settings 
 */
 
-include_once( 'kernel/common/template.php' );
-
 
 class eZCoreServerCall
 {
@@ -134,6 +132,7 @@ class eZCoreServerCall
     {
         if ( $this->isTemplateFunction )
         {
+            include_once( 'kernel/common/template.php' );
             $tpl = templateInit();
             $tpl->setVariable( 'arguments', $this->functionArguments);
             $tpl->setVariable( 'environment', $environmentArguments );

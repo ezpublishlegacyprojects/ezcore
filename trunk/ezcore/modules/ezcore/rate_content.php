@@ -32,8 +32,8 @@
  */
 
 
-include_once( 'kernel/classes/ezcontentobject.php' );
-include_once( 'lib/ezdb/classes/ezdb.php' );
+//include_once( 'kernel/classes/ezcontentobject.php' );
+//include_once( 'lib/ezdb/classes/ezdb.php' );
 
 $Module   = $Params['Module'];
 $objId    = (int) $Params['contentobject_id'];

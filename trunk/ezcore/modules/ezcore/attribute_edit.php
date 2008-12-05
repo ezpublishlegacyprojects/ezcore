@@ -37,9 +37,9 @@
 // ## END ABOUT TEXT, SPECS AND DESCRIPTION  ##
 //
 
-include_once( 'kernel/classes/ezcontentcachemanager.php' );
-include_once( 'kernel/classes/ezcontentobject.php' );
-include_once( 'kernel/classes/datatypes/ezuser/ezuser.php' );
+//include_once( 'kernel/classes/ezcontentcachemanager.php' );
+//include_once( 'kernel/classes/ezcontentobject.php' );
+//include_once( 'kernel/classes/datatypes/ezuser/ezuser.php' );
 
 
 if ( !isset( $Params['object_id'] ) || !is_numeric($Params['object_id']) )

@@ -32,8 +32,8 @@
 */
 
 
-include_once( 'kernel/classes/ezcontentobject.php' );
-include_once( 'kernel/classes/ezcontentcachemanager.php' );
+//include_once( 'kernel/classes/ezcontentobject.php' );
+//include_once( 'kernel/classes/ezcontentcachemanager.php' );
 
 
 $Module              = $Params['Module'];
