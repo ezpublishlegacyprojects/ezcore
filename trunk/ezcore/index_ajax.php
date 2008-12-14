@@ -111,6 +111,15 @@ ignore_user_abort( true );
 ob_start();
 error_reporting ( E_ALL );
 
+
+/*
+    see:
+    - http://www.php.net/manual/en/function.session-set-save-handler.php
+    - http://bugs.php.net/bug.php?id=33635
+    - http://bugs.php.net/bug.php?id=33772
+*/
+register_shutdown_function( 'session_write_close' );
+
 // register fatal error & debug handler
 eZExecution::addFatalErrorHandler( 'eZFatalError' );
 eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
