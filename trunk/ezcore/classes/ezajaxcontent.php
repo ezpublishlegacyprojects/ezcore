@@ -39,7 +39,7 @@ class eZAjaxContent
     /**
      * Constructor
      *
-     * @access private
+     * @access protected
      */
     protected function __construct()
     {
@@ -48,7 +48,7 @@ class eZAjaxContent
     /**
      * Clone
      *
-     * @access private
+     * @access protected
      */
     protected function __clone()
     {
@@ -130,7 +130,13 @@ class eZAjaxContent
         else
             return self::textEncode( $ret );
     }
-    
+
+    /**
+     * Encodes mixed value to string or comma seperated list of strings
+     *
+     * @param mixed $mix
+     * @return string
+     */
     public static function textEncode( $mix )
     {
         if ( is_array( $mix ) )
@@ -169,7 +175,7 @@ class eZAjaxContent
         else
             return $ret;
     }
-    
+
     /**
      * Function for simplifying a content object or node
      *
@@ -423,7 +429,7 @@ class eZAjaxContent
      * @copyright 2005 Michal Migurski
      * @license http://www.freebsd.org/copyright/freebsd-license.html
      * @link http://pear.php.net/pepr/pepr-proposal-show.php?id=198
-     * @access private
+     * @access protected
      * @return string
     */
     protected function phpJsonEncode( $var )
@@ -582,7 +588,7 @@ class eZAjaxContent
     * 
     * @param string $name
     * @param mixed $value
-    * @access private
+    * @access protected
     * @return string
     */
     protected function phpJsonEncodeNameValue( $name, $value )
