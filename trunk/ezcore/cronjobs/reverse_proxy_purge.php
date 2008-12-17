@@ -85,7 +85,7 @@ for ($i = 1; $i <= $iterations; $i++)
                 {
                     $cli->output( 'Could not purge url: ' . $source );
                 }
-                else if ( !$isQuiet && $response !== null )
+                else if ( $response !== null )
                 {
                     //$cli->output( 'Reverse proxy returned response: ' . $response );
                     //$cli->output( 'Relative url used in put: ' . $source );
@@ -114,7 +114,7 @@ if ( $inDeleteSQL !== '' )
 
 if ( !$isQuiet )
 {
-    $cli->output( "Done" );
+    $cli->output( "Done! Purged " . count( $doneList )  . " url's"  );
 }
 
 ?>
