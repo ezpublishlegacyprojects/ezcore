@@ -90,7 +90,7 @@ class eZCoreServerCallFunctions
             if( $keywordStr === '' or strpos( strtolower( $string ), strtolower( $keywordStr ) ) === 0)
             {
                 $keywords[] = $string;
-                $keywordLimit--;
+                --$keywordLimit;
                 if ( $keywordLimit === 0 ) break;
             }
         }

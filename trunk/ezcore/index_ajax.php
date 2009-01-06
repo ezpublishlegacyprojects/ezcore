@@ -43,8 +43,8 @@ if ( isset( $_SERVER['HTTP_IF_MODIFIED_SINCE'] ) )
 }*/
 
 require 'autoload.php';
-require_once( 'lib/ezutils/classes/ezsession.php' );
-require_once( 'kernel/common/ezincludefunctions.php' );
+include_once( 'lib/ezutils/classes/ezsession.php' );
+include_once( 'kernel/common/ezincludefunctions.php' );
 
 function ezupdatedebugsettings()
 {
@@ -142,13 +142,13 @@ eZSys::init( 'index.php', $ini->variable( 'SiteAccessSettings', 'ForceVirtualHos
 $uri = eZURI::instance( eZSys::requestURI() );
 $GLOBALS['eZRequestedURI'] = $uri;
 
-require_once 'pre_check.php';
+require 'pre_check.php';
 
 // Check for extension
 eZExtension::activateExtensions( 'default' );
 
 // load siteaccess
-require_once 'access.php';
+require 'access.php';
 $access = accessType( $uri,
                       eZSys::hostname(),
                       eZSys::serverPort(),

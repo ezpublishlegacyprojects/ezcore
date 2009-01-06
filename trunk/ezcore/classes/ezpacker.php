@@ -76,7 +76,7 @@ class eZPacker
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a js file or js content?
-            if ( strlen( $packedFile ) > 3 && strripos( $packedFile, '.js' ) === ( strlen( $packedFile ) -3 ) )
+            if ( isset( $packedFile{4} ) && strripos( $packedFile, '.js' ) === ( strlen( $packedFile ) -3 ) )
                 $ret .=  $packedFile ? "<script$lang type=\"$type\" src=\"$packedFile\"></script>\r\n" : '';
             else
                 $ret .=  $packedFile ? "<script$lang type=\"$type\">\r\n$packedFile\r\n</script>\r\n" : '';
@@ -92,7 +92,7 @@ class eZPacker
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a css file or css content?
-            if ( strlen( $packedFile ) > 4 && strripos( $packedFile, '.css' ) === ( strlen( $packedFile ) -4 ) )
+            if ( isset( $packedFile{5} ) && strripos( $packedFile, '.css' ) === ( strlen( $packedFile ) -4 ) )
                 $ret .= $packedFile ? "<link rel=\"$rel\" type=\"$type\" href=\"$packedFile\" media=\"$media\" />\r\n" : '';
             else
                 $ret .= $packedFile ? "<style rel=\"$rel\" type=\"$type\" media=\"$media\">\r\n$packedFile\r\n</style>\r\n" : '';
@@ -232,7 +232,7 @@ class eZPacker
 
             // get file time and continue if it return false
             $file      = str_replace( '//' . self::$wwwDir, '', '//' . $file );
-            $fileTime = @filemtime( $file );
+            $fileTime = file_exists( $file ) ? filemtime( $file ): false;
 
             if ( $fileTime === false )
             {
@@ -282,7 +282,7 @@ class eZPacker
            }
 
            // else, get content of normal file
-           $fileContent = @file_get_contents( $file );
+           $fileContent = file_get_contents( $file );
 
            if ( !trim( $fileContent ) )
            {

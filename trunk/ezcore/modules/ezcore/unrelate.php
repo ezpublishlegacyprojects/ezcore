@@ -90,7 +90,7 @@ else
         }
         else
         {
-            $priority++;
+            ++$priority;
             $content['relation_list'][$i]['priority'] = $priority;
             $newContent['relation_list'][] = $content['relation_list'][$i];
         }
