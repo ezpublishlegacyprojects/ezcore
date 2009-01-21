@@ -113,15 +113,26 @@ class eZPacker
         return eZPacker::packFiles( $cssFiles, 'stylesheets/', '_all.css', $packLevel, $wwwInCacheHash );
     }
 
-    // static :: sets the system directories
-    static function setSystemDirs()
+    // static :: gets the cache dir
+    static function getCacheDir()
     {
         if ( self::$cacheDir === null )
         {
             $sys = eZSys::instance();
             self::$cacheDir = $sys->cacheDirectory() . '/public/';
+        }
+        return self::$cacheDir;
+    }
+
+    // static :: gets the www dir
+    static function getWwwDir()
+    {
+        if ( self::$wwwDir === null )
+        {
+            $sys = eZSys::instance();
             self::$wwwDir = $sys->wwwDir() . '/';
         }
+        return self::$wwwDir;
     }
     
     /* static ::
@@ -146,19 +157,18 @@ class eZPacker
         $ezCoreIni = eZINI::instance( 'ezcore.ini' );
         $bases   = eZTemplateDesignResource::allDesignBases();
         
-        self::setSystemDirs();
-        
         $packerInfo = array(
             'file_extension' => $fileExtension,
             'pack_level' => $packLevel,
             'sub_path' => $subPath,
-            'cache_dir' => self::$cacheDir,
-            'www_dir' => self::$wwwDir,
+            'cache_dir' => self::getCacheDir(),
+            'www_dir' => self::getWwwDir(),
         );
 
+        // needed for image includes to work on ezp installs with mixed access methods (virtualhost + url based setup)
         if ( $wwwInCacheHash )
         {
-            $cacheName = self::$wwwDir;
+            $cacheName = $packerInfo['www_dir'];
         }
 
         while( count( $fileArray ) > 0 )
@@ -205,7 +215,7 @@ class eZPacker
             }
             // else: normal css / js files:
 
-            // is it a absolute ?
+            // is it a absolute path ?
             if ( strpos( $file, 'var/' ) === 0 )
             {
                 if ( substr( $file, 0, 2 ) === '//' || preg_match( "#^[a-zA-Z0-9]+:#", $file ) )
@@ -227,11 +237,11 @@ class eZPacker
                     eZDebug::writeWarning( "Could not find: $file", "eZPacker::packFiles()" );
                     continue;
                 }
-                $file = htmlspecialchars( self::$wwwDir . $match['path'] );
+                $file = htmlspecialchars( $packerInfo['www_dir'] . $match['path'] );
             }
 
             // get file time and continue if it return false
-            $file      = str_replace( '//' . self::$wwwDir, '', '//' . $file );
+            $file      = str_replace( '//' . $packerInfo['www_dir'], '', '//' . $file );
             $fileTime = file_exists( $file ) ? filemtime( $file ): false;
 
             if ( $fileTime === false )
@@ -243,7 +253,7 @@ class eZPacker
             // calculate last modified time and store in arrays
             $lastmodified  = max( $lastmodified, $fileTime );
             $validFiles[] = $file;
-            $validWWWFiles[] = self::$wwwDir . $file;
+            $validWWWFiles[] = $packerInfo['www_dir'] . $file;
             $cacheName   .= $file . '_';
         }
 
@@ -258,14 +268,14 @@ class eZPacker
 
         // generate cache file name and path
         $cacheName = md5( $cacheName . $packLevel ) . $fileExtension;
-        $cachePath = self::$cacheDir . $subPath;
+        $cachePath = $packerInfo['cache_dir'] . $subPath;
 
         if ( file_exists( $cachePath . $cacheName ) )
         {
             // check last modified time and return path to cache file if valid
             if ( $lastmodified <= filemtime( $cachePath . $cacheName ) )
             {
-                return array( self::$wwwDir . $cachePath . $cacheName );
+                return array( $packerInfo['www_dir'] . $cachePath . $cacheName );
             }
         }
 
@@ -313,7 +323,7 @@ class eZPacker
         // save file and return path if sucsessfull
         if( eZFile::create( $cacheName, $cachePath, $content ) )
         {
-            return array( self::$wwwDir . $cachePath . $cacheName );
+            return array( $packerInfo['www_dir'] . $cachePath . $cacheName );
         }
 
         return array();
@@ -336,7 +346,7 @@ class eZPacker
                if ( $match[0] !== '/' and strpos( $match, 'http:' ) === false )
                {
                    $cssPathSlice = $relativeCount === 0 ? $cssPathArray : array_slice( $cssPathArray  , 0, $cssPathCount - $relativeCount  );
-                   $newMatchPath = self::$wwwDir . implode('/', $cssPathSlice) . '/' . str_replace('../', '', $match);
+                   $newMatchPath = self::getWwwDir() . implode('/', $cssPathSlice) . '/' . str_replace('../', '', $match);
                    $fileContent = str_replace( $match, $newMatchPath, $fileContent );
                }
            }
