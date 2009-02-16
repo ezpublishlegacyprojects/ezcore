@@ -214,7 +214,7 @@ class eZPacker
                 continue;
             }
             // is it a http url  ?
-            else if ( strpos( $file, 'http://' ) === 0 )
+            else if ( strpos( $file, 'http://' ) === 0 || strpos( $file, 'https://' ) === 0 )
             {
                 $fileTime = 0;
                 $wwwFile  = $file;
