@@ -27,6 +27,12 @@
 // ## END COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 //
 
+/*
+   DEPRECATED: USe this instead: http://projects.ez.no/all2evcc should work a bit better since it uses workflow.
+   TODO: Merge multisite purge stuff in eZReverseProxyCacheManager to all2evcc
+ */
+
+
 class eZReverseProxyCacheManager
 {
     /**

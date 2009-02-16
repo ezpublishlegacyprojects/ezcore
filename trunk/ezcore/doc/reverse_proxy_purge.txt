@@ -1,6 +1,10 @@
 Cronjob to purge reverse proxy using HTTP PURGE
 
 
+  DEPRECATED: USe this instead: http://projects.ez.no/all2evcc should work a bit better since it uses workflow.
+  TODO: Merge multisite purge stuff in eZReverseProxyCacheManager to all2evcc
+
+
   This is a delayed reverse proxy purge that uses the static cache code introduced in 3.10
   that enables you to do delayed ( so it doesn't slow down the publishing process )
   static cleaning. You can NOT run this cronjob together with staticcache_clean.php
