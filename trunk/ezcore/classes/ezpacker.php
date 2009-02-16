@@ -213,10 +213,14 @@ class eZPacker
                 }
                 continue;
             }
-            // else: normal css / js files:
-
+            // is it a http url  ?
+            else if ( strpos( $file, 'http://' ) === 0 )
+            {
+                $fileTime = 0;
+                $wwwFile  = $file;
+            }
             // is it a absolute path ?
-            if ( strpos( $file, 'var/' ) === 0 )
+            else if ( strpos( $file, 'var/' ) === 0 )
             {
                 if ( substr( $file, 0, 2 ) === '//' || preg_match( "#^[a-zA-Z0-9]+:#", $file ) )
                     $file = '/';
@@ -224,6 +228,10 @@ class eZPacker
                     $file = '/' . $file;
 
                 eZURI::transformURI( $file, true, 'relative' );
+                // get file time and continue if it return false
+                $file     = str_replace( '//' . $packerInfo['www_dir'], '', '//' . $file );
+                $fileTime = file_exists( $file ) ? filemtime( $file ): false;
+                $wwwFile  = $packerInfo['www_dir'] . $file;
             }
             // or is it a relative path
             else
@@ -237,23 +245,21 @@ class eZPacker
                     eZDebug::writeWarning( "Could not find: $file", "eZPacker::packFiles()" );
                     continue;
                 }
-                $file = htmlspecialchars( $packerInfo['www_dir'] . $match['path'] );
+                $file = htmlspecialchars( $match['path'] );
+                $fileTime = file_exists( $file ) ? filemtime( $file ): false;
+                $wwwFile  = $packerInfo['www_dir'] . $file;
             }
-
-            // get file time and continue if it return false
-            $file      = str_replace( '//' . $packerInfo['www_dir'], '', '//' . $file );
-            $fileTime = file_exists( $file ) ? filemtime( $file ): false;
 
             if ( $fileTime === false )
             {
-                eZDebug::writeWarning( "Could not find: $file", "eZPacker::packFiles()" );
+                eZDebug::writeWarning( "Could not get modified time of file: $file", "eZPacker::packFiles()" );
                 continue;
             }
 
             // calculate last modified time and store in arrays
             $lastmodified  = max( $lastmodified, $fileTime );
             $validFiles[] = $file;
-            $validWWWFiles[] = $packerInfo['www_dir'] . $file;
+            $validWWWFiles[] = $wwwFile;
             $cacheName   .= $file . '_';
         }
 
