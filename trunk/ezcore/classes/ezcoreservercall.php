@@ -134,7 +134,7 @@ class eZCoreServerCall
         {
             include_once( 'kernel/common/template.php' );
             $tpl = templateInit();
-            $tpl->setVariable( 'arguments', $this->functionArguments);
+            $tpl->setVariable( 'arguments', $this->functionArguments );
             $tpl->setVariable( 'environment', $environmentArguments );
             return $tpl->fetch( 'design:' . $this->className . '/' . $this->functionName . '.tpl' );
         }
