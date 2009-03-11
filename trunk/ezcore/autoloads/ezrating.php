@@ -302,7 +302,7 @@ class eZContentRating
         else if ( $ret === false )
         {
             eZDebug::writeError( 'The ezcontentobject_rating table seems to be missing,
-                          contact your administrator', 'eZContentRating' );
+                          contact your administrator', __METHOD__ );
             $ret = array();
         }
         else
@@ -370,7 +370,7 @@ class eZContentRating
         else if ( $rs === false )
         {
             eZDebug::writeError( 'The ezcontentobject_rating table seems to be missing,
-                                  contact your administrator', 'eZContentRating' );
+                                  contact your administrator', __METHOD__ );
         }
         return $ret;
     }

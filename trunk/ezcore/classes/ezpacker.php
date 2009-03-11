@@ -200,7 +200,7 @@ class eZPacker
                 // make sure the function is present on the class
                 if ( !$serverCall->hasCall() )
                 {
-                    eZDebug::writeWarning( 'Could not find function: ' . $serverCall->getCallName() . '()', "eZPacker::packFiles()" );
+                    eZDebug::writeWarning( 'Could not find function: ' . $serverCall->getCallName() . '()', __METHOD__ );
                     continue;
                 }
 
@@ -242,7 +242,7 @@ class eZPacker
 
                 if ( $match === false )
                 {
-                    eZDebug::writeWarning( "Could not find: $file", "eZPacker::packFiles()" );
+                    eZDebug::writeWarning( "Could not find: $file", __METHOD__ );
                     continue;
                 }
                 $file = htmlspecialchars( $match['path'] );
@@ -252,7 +252,7 @@ class eZPacker
 
             if ( $fileTime === false )
             {
-                eZDebug::writeWarning( "Could not get modified time of file: $file", "eZPacker::packFiles()" );
+                eZDebug::writeWarning( "Could not get modified time of file: $file", __METHOD__ );
                 continue;
             }
 
@@ -268,7 +268,7 @@ class eZPacker
 
         if ( !$validFiles )
         {
-            eZDebug::writeWarning( "Could not find any files: " . var_export( $fileArray, true ), "eZPacker::packFiles()" );
+            eZDebug::writeWarning( "Could not find any files: " . var_export( $fileArray, true ), __METHOD__ );
             return array();
         }
 

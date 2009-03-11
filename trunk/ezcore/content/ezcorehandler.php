@@ -100,7 +100,7 @@ class ezcoreHandler extends eZContentObjectEditHandler
         if ( $hideDate > 0 && $hideDate < $currrentDate  )
         {
             // if hide date is passed, hide nodes
-            eZDebug::writeNotice( 'Hiding nodes for object: ' . $object->attribute('id') , 'ezcoreHandler::publish' );
+            eZDebug::writeNotice( 'Hiding nodes for object: ' . $object->attribute('id') , __METHOD__ );
             $nodes = $object->attribute('assigned_nodes');
             foreach ( $nodes as $node )
             {
@@ -119,7 +119,7 @@ class ezcoreHandler extends eZContentObjectEditHandler
                 return true;
             }
             // if unhide date is passed, unhide nodes and set published timestamp
-            eZDebug::writeNotice( 'Unhiding nodes for object: ' . $object->attribute('id') , 'ezcoreHandler::publish' );
+            eZDebug::writeNotice( 'Unhiding nodes for object: ' . $object->attribute('id') , __METHOD__ );
             if ( $unhideModifyPublishDate )
             {
                 $object->setAttribute('published', $unhideDate );
@@ -138,7 +138,7 @@ class ezcoreHandler extends eZContentObjectEditHandler
         else if ( $unhideDate > $currrentDate  )
         {
             // if unhide date is NOT passed, hide nodes
-            eZDebug::writeNotice( 'Hiding nodes (waiting for cronjob to unhide them later) for object: ' . $object->attribute('id') , 'ezcoreHandler::publish' );
+            eZDebug::writeNotice( 'Hiding nodes (waiting for cronjob to unhide them later) for object: ' . $object->attribute('id') , __METHOD__ );
             $nodes = $object->attribute('assigned_nodes');
             foreach ( $nodes as $node )
             {

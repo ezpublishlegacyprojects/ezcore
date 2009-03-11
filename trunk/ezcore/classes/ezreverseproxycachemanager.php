@@ -77,7 +77,7 @@ class eZReverseProxyCacheManager
                 }
             }
         }
-        //eZDebug::writeDebug( 'SiteIdList is: ' . var_export( $siteIdList, true ) . ' where siteId from caller is: '. $siteId , 'eZReverseProxyCacheManager::purgeURL' );
+        //eZDebug::writeDebug( 'SiteIdList is: ' . var_export( $siteIdList, true ) . ' where siteId from caller is: '. $siteId , __METHOD__ );
 
 		// Make host name array to purge based on $siteIdList
         foreach( $siteIdList as $selectedSiteId )
@@ -88,7 +88,7 @@ class eZReverseProxyCacheManager
             }
             else
             {
-                eZDebug::writeError( 'SiteId: ' . $selectedSiteId .' not defined in: [UrlHostMapping]SiteIdToHostMap', 'eZReverseProxyCacheManager::purgeURL' );
+                eZDebug::writeError( 'SiteId: ' . $selectedSiteId .' not defined in: [UrlHostMapping]SiteIdToHostMap', __METHOD__ );
             }
         }
         $hostNameList = array_unique( $hostNameList );
@@ -130,7 +130,7 @@ class eZReverseProxyCacheManager
                          $timeOut );
         if ( !$fp )
         {
-            eZDebug::writeError( 'Error connecting to: ' . $hostName .':'. $port . " error string: $errstr ($errno)" , 'eZReverseProxyCacheManager::purge' );
+            eZDebug::writeError( 'Error connecting to: ' . $hostName .':'. $port . " error string: $errstr ($errno)" , __METHOD__ );
             return null;
         }
 
@@ -140,7 +140,7 @@ class eZReverseProxyCacheManager
         // Try to put(write) PURGE to server
         if ( !fputs( $fp, $HTTPRequest, strlen( $HTTPRequest ) ) )
         {
-            eZDebug::writeError( 'Error purging: ' . $path .' on host: ' . $hostName .':'. $port, 'eZReverseProxyCacheManager::purge' );
+            eZDebug::writeError( 'Error purging: ' . $path .' on host: ' . $hostName .':'. $port, __METHOD__ );
             return null;
         }
 
@@ -153,7 +153,7 @@ class eZReverseProxyCacheManager
         // close the socket
         fclose( $fp );
 
-        eZDebug::writeNotice( 'Successfully purged: ' . $path .' on host: ' . $hostName .':'. $port, 'eZReverseProxyCacheManager::purge' );
+        eZDebug::writeNotice( 'Successfully purged: ' . $path .' on host: ' . $hostName .':'. $port, __METHOD__ );
 
         return $rawResponse;
     }
