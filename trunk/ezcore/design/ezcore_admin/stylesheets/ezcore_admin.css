@@ -1,0 +1,23 @@
+
+
+div#ezcore_keyword_suggestion_dropdown
+{
+    position: absolute;
+    z-index: 95;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #bfbfb7;
+    border-top: 0px none;
+    text-align: left;
+    height: 200px;
+}
+div#ezcore_keyword_suggestion_dropdown li
+{
+    list-style: none;
+    cursor: pointer;
+    padding-left: 1em;
+}
+div#ezcore_keyword_suggestion_dropdown li.selected
+{
+    background: #c6cfd7;
+}
