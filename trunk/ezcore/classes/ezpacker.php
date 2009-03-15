@@ -70,16 +70,25 @@ class eZPacker
     static function buildJavascriptTag( $scriptFiles, $type, $lang, $packLevel = 2, $wwwInCacheHash = false )
     {
         $ret = '';
-        if ( !$lang ) $lang = '';
-        else $lang = ' language="' . $lang . '"';
+        $lang = $lang ? ' language="' . $lang . '"' : '';
+        $http = eZHTTPTool::instance();
+        $useFullUrl = ( isset( $http->UseFullUrl ) && $http->UseFullUrl );
         $packedFiles = eZPacker::packFiles( $scriptFiles, 'javascript/', '.js', $packLevel, $wwwInCacheHash );
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a js file or js content?
             if ( isset( $packedFile{4} ) && strripos( $packedFile, '.js' ) === ( strlen( $packedFile ) -3 ) )
-                $ret .=  $packedFile ? "<script$lang type=\"$type\" src=\"$packedFile\"></script>\r\n" : '';
+            {
+                if ( $useFullUrl )
+                {
+                    $packedFile = $http->createRedirectUrl( $packedFile, array( 'pre_url' => false ) );
+                }
+                $ret .= "<script$lang type=\"$type\" src=\"$packedFile\"></script>\r\n";
+            }
             else
+            {
                 $ret .=  $packedFile ? "<script$lang type=\"$type\">\r\n$packedFile\r\n</script>\r\n" : '';
+            }
         }
         return $ret;
     }
@@ -89,13 +98,23 @@ class eZPacker
     {
         $ret = '';
         $packedFiles = eZPacker::packFiles( $cssFiles, 'stylesheets/', '_' . $media . '.css', $packLevel, $wwwInCacheHash );
+        $http = eZHTTPTool::instance();
+        $useFullUrl = ( isset( $http->UseFullUrl ) && $http->UseFullUrl );
         foreach ( $packedFiles as $packedFile )
         {
             // Is this a css file or css content?
             if ( isset( $packedFile{5} ) && strripos( $packedFile, '.css' ) === ( strlen( $packedFile ) -4 ) )
-                $ret .= $packedFile ? "<link rel=\"$rel\" type=\"$type\" href=\"$packedFile\" media=\"$media\" />\r\n" : '';
+            {
+                if ( $useFullUrl )
+                {
+                    $packedFile = $http->createRedirectUrl( $packedFile, array( 'pre_url' => false ) );
+                }
+                $ret .= "<link rel=\"$rel\" type=\"$type\" href=\"$packedFile\" media=\"$media\" />\r\n";
+            }
             else
+            {
                 $ret .= $packedFile ? "<style rel=\"$rel\" type=\"$type\" media=\"$media\">\r\n$packedFile\r\n</style>\r\n" : '';
+            }
         }
         return $ret;
     }
