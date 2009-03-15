@@ -48,21 +48,25 @@ var ezcoreKeyword = {
     callBack: function( content, errorCode, errorText )
     { 
         // errorCode is 0 if everything went ok
-        var html = '<ul><li>' + content.join('</li><li>') + '</li>';
-        ezcoreKeyword.div.el.innerHTML = html + '</ul>';
-
-        var inp = ezcoreKeyword.inputs[ ezcoreKeyword.inpIndex ];
-        ezcoreKeyword.div.setStyles({
-            top: inp.getPosition('top') + inp.getSize('height', true) + 'px',
-            left: inp.getPosition('left') + 'px',
-            width: inp.getSize('width', true) + 'px'
-        });
-
-        ezcoreKeyword.dropdownLI = ez.$$('#ezcore_keyword_suggestion_dropdown li');
-        ezcoreKeyword.dropdownLI.callEach('addEvent', 'mouseover', ezcoreKeyword.mouse, ezcoreKeyword );
-        ezcoreKeyword.dropdownLI.callEach('addEvent', 'mousedown', ez.fn.bind( ezcoreKeyword.enter, ezcoreKeyword, inp.el ) );
-
-        ezcoreKeyword.div.show( {duration:500, transition: ez.fx.sinoidal}, {height:0, display:'none'} );
+        if ( errorCode === 0 && content && content.length > 0 )
+        {
+            var html = '<ul><li>' + content.join('</li><li>') + '</li>';
+            ezcoreKeyword.div.el.innerHTML = html + '</ul>';
+    
+            var inp = ezcoreKeyword.inputs[ ezcoreKeyword.inpIndex ];
+            ezcoreKeyword.div.setStyles({
+                top: inp.getPosition('top') + inp.getSize('height', true) + 'px',
+                left: inp.getPosition('left') + 'px',
+                width: inp.getSize('width', true) + 'px'
+            });
+    
+            ezcoreKeyword.dropdownLI = ez.$$('#ezcore_keyword_suggestion_dropdown li');
+            ezcoreKeyword.dropdownLI.callEach('addEvent', 'mouseover', ezcoreKeyword.mouse, ezcoreKeyword );
+            ezcoreKeyword.dropdownLI.callEach('addEvent', 'mousedown', ez.fn.bind( ezcoreKeyword.enter, ezcoreKeyword, inp.el ) );
+    
+            ezcoreKeyword.div.show( {duration:500, transition: ez.fx.sinoidal}, {height:0, display:'none'} );
+        }
+        // TODO: show error text somehow
     },
     press : function( e, el )
     {
