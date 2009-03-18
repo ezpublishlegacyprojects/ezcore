@@ -169,7 +169,10 @@ if ( $moduleName === '' || strpos( $moduleName, '.php' ) !== false  )
 $db = eZDB::instance();
 if ( $db->isConnected() )
 {
-    eZSessionStart();
+    if ( class_exists( 'eZSession' ) )
+        eZSession::start();
+    else
+        eZSessionStart();
 }
 else
 {
