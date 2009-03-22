@@ -5,12 +5,14 @@
 ExtensionAutoloadPath[]=ezcore
 
 
-#[RoleSettings]
-
-
 [SSLZoneSettings] 
 ModuleViewAccessMode[ezcore/*]=keep
 
+[RoleSettings]
+PolicyOmitList[]=ezcore/hello
+
+[SiteAccessSettings]
+AnonymousAccessList[]=ezcore/hello
 
 
 

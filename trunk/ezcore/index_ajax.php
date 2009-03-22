@@ -160,9 +160,14 @@ $access = changeAccess( $access );
 
 // check module name
 $moduleName = $uri->element();
-if ( $moduleName === '' || strpos( $moduleName, '.php' ) !== false  )
+if ( strpos( $moduleName, 'index_ajax.php' ) !== false  )
 {
-    exitWithInternalError( 'Did not find module info in url.' );
+    $uri->increase();
+    $moduleName = $uri->element();
+}
+if ( $moduleName === '' )
+{
+    exitWithInternalError( 'Did not find module info in url. (165)' );
 }
 
 // chack db connection

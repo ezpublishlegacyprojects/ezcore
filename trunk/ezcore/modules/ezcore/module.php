@@ -36,6 +36,12 @@ $ViewList['attribute_edit'] = array(
     'script' => 'attribute_edit.php',
     'params' => array( 'object_id', 'attribute_identifier', 'attribute_value' )
     );
+
+$ViewList['hello'] = array(
+    'functions' => array(  ),
+    'script' => 'hello.php',
+    'params' => array( 'with_pagelayout' )
+    );
     
 
 
