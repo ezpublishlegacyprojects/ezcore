@@ -16,7 +16,7 @@ index_ajax.php:
 
     A light ajax index.php for your ajax modules, checks access to siteaccess
     and module / view and gives response according to HTTP_ACCEPT header.
-    Is approximately 2-4 times faster then normal index.php loading, and 
+    Is approximately 20-80%  faster then normal index.php loading, and 
     you avoid getting a large and slow 404 response if something went wronge..
     Supported responses: xml, json and text/xhtml
 
@@ -31,16 +31,13 @@ index_ajax.php:
        
     Using on your own modules:
     0. This example uses myextension and mymodule as extension and module name
-    1. Add this to module.ini:
-       [ModuleSettings]
-       ExtensionAjaxRepositories[]=myextension
-    2. Add Rewrite rule
+    1. Add Rewrite rule
        RewriteRule mymodule/myview/ /index_ajax.php [L]
 
-    Alternative approach to above approach for using your own modules:
+    Alternative approach for using your own modules:
     1. simply use ezcore/run to execute your own view
        so you don't need to add rewrite rules for each new ajax view
-    2. Optional: Specify ezcore/run in the
+    2. Recomended: Specify ezcore/run in the
        [SiteAccessSettings]AnonymousAccessList[]
        and
        [RoleSettings]PolicyOmitList[]
@@ -74,13 +71,14 @@ ezcore/call:
     
     How to use your own flavour of a javascript library:
       1. Since all js libraryes are different, you'll need to implement the js -> ezcore/call glue your self.
-         But it is really simple if you know your js shit :P
-         So look in classes/ezcoreserverfunctions.php in the server function for how it is done.
+         But it is really simple if you know your js.
+         So look in classes/ezcoreservercallfunctions.php in the 'server' function for how it is done.
          You'll notice that the only reason why this is generated in php code is to know the url for the root
-         of the current eZ Publish install, so you can implement this as a template instead if you want.
+         of the current eZ Publish install, so you can implement this as a template instead if you want to or
+         in pure javascript where you hardcode server root url or guess it or set it with {'/'|ezurl}.
 
       2. Now simply follow the guid above for the ezcore library, but change the calls to your own functions.
-         1st step could be something like {ezscript(array('yui.js', 'yui::server'))} if your using yui..
+         1st step could be something like {ezscript(array('yui.js', 'yui::server'))} if your using yui.
 
 ezcoreservercall.php:
 
