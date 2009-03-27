@@ -2,9 +2,10 @@
 
 [ModuleSettings]
 ExtensionRepositories[]=ezcore
-# List of repositories that should be accessible from
-# index_ajax.php
+
+# DEPRECATED: not needed anymore since index_ajax.php fully supports access rules
 ExtensionAjaxRepositories[]=ezcore
+
 ModuleList[]=ezcore
 
 */ ?>

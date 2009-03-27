@@ -214,15 +214,13 @@ foreach( $headerList as $key => $value )
 // set default section id
 eZSection::initGlobalID();
 
-// get and set ajax module repositories
+// Get and set module repositories
 $moduleINI = eZINI::instance( 'module.ini' );
 $globalModuleRepositories = array( );
-if ( $moduleINI->hasVariable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) )
+$extensionRepositories = $moduleINI->variable( 'ModuleSettings', 'ExtensionRepositories' );
+foreach ( $extensionRepositories as $repo )
 {
-    foreach ( $moduleINI->variable( 'ModuleSettings', 'ExtensionAjaxRepositories' ) as $repo )
-    {
-        $globalModuleRepositories[] = 'extension/' . $repo . '/modules';
-    }
+    $globalModuleRepositories[] = 'extension/' . $repo . '/modules';
 }
 eZModule::setGlobalPathList( $globalModuleRepositories );
 
