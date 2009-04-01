@@ -162,6 +162,7 @@ $access = changeAccess( $access );
 $moduleName = $uri->element();
 if ( strpos( $moduleName, 'index_ajax.php' ) !== false  )
 {
+    // this is probably a workaround for #14720
     $uri->increase();
     $moduleName = $uri->element();
 }
@@ -237,7 +238,7 @@ if ( $check !== null )
 $module = eZModule::findModule( $moduleName );
 if ( !$module instanceof eZModule )
 {
-    exitWithInternalError( "'$moduleName' module does not exist, or is not a valid ajax module." );
+    exitWithInternalError( "'$moduleName' module does not exist, or is not a valid module." );
 }
 
 // find module view
