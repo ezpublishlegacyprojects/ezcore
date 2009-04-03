@@ -127,6 +127,8 @@ eZDebug::setHandleType( eZDebug::HANDLE_FROM_PHP );
 // Trick to get eZSys working with a script other than index.php (while index.php still used in generated URLs):
 $_SERVER['SCRIPT_FILENAME'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['SCRIPT_FILENAME'] );
 $_SERVER['PHP_SELF'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['PHP_SELF'] );
+$_SERVER['REQUEST_URI'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['REQUEST_URI'] );
+$_SERVER['SCRIPT_NAME'] = str_replace( '/index_ajax.php', '/index.php', $_SERVER['SCRIPT_NAME'] );
 
 // set timezone to avoid strict errors
 $ini = eZINI::instance();
@@ -160,12 +162,12 @@ $access = changeAccess( $access );
 
 // check module name
 $moduleName = $uri->element();
-if ( strpos( $moduleName, 'index_ajax.php' ) !== false  )
+/*if ( strpos( $moduleName, 'index_ajax.php' ) !== false  )
 {
     // this is probably a workaround for #14720
     $uri->increase();
     $moduleName = $uri->element();
-}
+}*/
 if ( $moduleName === '' )
 {
     exitWithInternalError( 'Did not find module info in url. (165)' );
