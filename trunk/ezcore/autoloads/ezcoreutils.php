@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //
 // Definition of eZCoreUtils
 //
@@ -93,7 +93,8 @@ class eZCoreUtils
         {
             case 'ezweeknumber':
             {            
-                /* Returns the week, year, day, start time and end time of week as defined in ISO 8601
+                /*
+                 * Returns the week, year, day, start time and end time of week as defined in ISO 8601
                  * First parameter is optional if you want to use a different timestamp then 'now'.
                  * ISO 8601:
                  * Rule 1: 4. January is always in week number 1
