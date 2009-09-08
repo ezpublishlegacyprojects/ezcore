@@ -48,7 +48,6 @@ General Performance tips for eZ Publish 4.1
    TranslatableSystemUrls=disabled
 
 4. Avoid cache_ttl=0
-   (This is not in svn yet as of 24.09.08)
    To read more on the issue:
    http://issues.ez.no/IssueView.php?Id=13274&activeItem=3
    Basically you can get into file lock issues if you use cache_ttl=0 on
@@ -80,6 +79,3 @@ General Performance tips for eZ Publish 4.1
    
    [ContentSettings]
    ViewCacheSettings[69]=pr_user
-
-   Note: as mentioned already, this ('ViewCacheSettings') is not in svn yet, and
-   might not end up in 4.1.
